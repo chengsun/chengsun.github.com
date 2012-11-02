@@ -1,0 +1,29 @@
+<html>
+  <body>
+    <canvas id="c" width="400" height="400"></canvas>
+    <script>
+      c = document.getElementById('c');
+      ctx = c.getContext('2d');
+      //var cx = -0.75, cy = 0.11;
+      var f = 0;
+      function draw() {
+        var cx = Math.sin(f/20);
+        var cy = Math.sin(f/30+2)/2;
+        var x = 0, y = 0;
+        ctx.clearRect(0, 0, 400, 400);
+        for (var iter = 0; iter < 4000; ++iter) {
+          var sign = Math.floor(Math.random()*2)*2 - 1;
+          y -= cy;
+          x -= cx;
+          var r = Math.sqrt(x*x+y*y);
+          y = sign * (y<0?-1:1) * Math.sqrt((r-x)/2);
+          x = sign * Math.sqrt((r+x)/2);
+          ctx.fillRect(x*100+200, y*100+200, 1-x*x, 1-y*y);
+        }
+        ++f;
+        setTimeout(draw, 30);
+      }
+      draw();
+    </script>
+  </body>
+</html>

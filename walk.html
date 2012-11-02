@@ -1,0 +1,33 @@
+<html>
+  <body>
+    <canvas id="c"></canvas>
+    <script type="text/javascript">
+      var width = 101, height = 101;
+      var scale = 4;
+      var c = document.getElementById('c');
+      c.width = width*scale;
+      c.height = height*scale;
+      var ctx = c.getContext('2d');
+      var xd = [-1, 0, 1, 0], yd = [0, 1, 0, -1];
+      var x = Math.floor(width/2), y = Math.floor(height/2);
+      var d = 1;
+      setInterval(function () {
+        for (var i = 0; i < 50; ++i) {
+          var imageData = ctx.getImageData(x*scale, y*scale, scale, scale);
+          var pix = imageData.data[3];
+          if (pix == 255) {
+            d = (d+1)%4;
+          } else {
+            d = (d+3)%4;
+          }
+          for (var sx = 0; sx < scale; ++sx)
+            for (var sy = 0; sy < scale; ++sy) {
+              imageData.data[sy*scale*4+sx*4+3] = 255-pix;
+            }
+          ctx.putImageData(imageData, x*scale, y*scale);
+          x += xd[d]; y += yd[d];
+        }
+      }, 10);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+<html>
+  <body>
+    <canvas id="c" width="400" height="400"></canvas>
+    <script>
+      c = document.getElementById('c');
+      ctx = c.getContext('2d');
+      //var cx = -0.75, cy = 0.11;
+      //var a = 0.3, b = 0.6, c = 2, d = 0.27;
+      var a = 0.9, b = -0.6, c = 2, d = 0.5;
+      var f = 0;
+      var x = 0.01, y = 0;
+      function draw() {
+        for (var iter = 0; iter < 200; ++iter) {
+          var newx = x*x - y*y + a*x + b*y;
+          var newy = 2*x*y + c*x + d*y;
+          x = newx;
+          y = newy;
+          ctx.fillRect(x*100+200, y*100+200, 1, 1);
+        }
+        ++f;
+        setTimeout(draw, 30);
+      }
+      draw();
+    </script>
+  </body>
+</html>
