@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!-- http://gamedev.tutsplus.com/tutorials/implementation/simulate-fabric-and-ragdolls-with-simple-verlet-integration/ -->
+<html>
+<head>
+<style type="text/css">
+canvas {
+    background-color: white;
+}
+</style>
+</head>
+<body id="b">
+<canvas id="c" width="500" height="500">asdf</canvas>
+<script type="text/javascript">
+var c = document.getElementById('c');
+var ctx = c.getContext('2d');
+ctx.translate(c.width/2,c.height/2);
+ctx.scale(c.width/4,c.height/4);
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+Point.prototype = {
+  add: function (p) {
+    return new Point(this.x+p.x, this.y+p.y);
+  },
+  sub: function (p) {
+    return new Point(this.x-p.x, this.y-p.y);
+  },
+  mul: function (n) {
+    return new Point(this.x*n, this.y*n);
+  },
+  div: function (n) {
+    return new Point(this.x/n, this.y/n);
+  },
+  len: function () {
+    return Math.sqrt(this.x*this.x + this.y*this.y);
+  },
+  dist: function (p) {
+    return this.sub(p).len();
+  }
+};
+
+var tick = 0;
+
+var prevPoints = [], points = [], links = [];
+for (var i = 0; i < 10; ++i) {
+  var a = [Math.random() * 2*Math.PI, Math.random() * 2*Math.PI];
+  points.push(new Point(Math.cos(a[0]), Math.cos(a[1])));
+  prevPoints.push(new Point(Math.cos(a[0]), Math.cos(a[1])));
+  //if (i != 0) links.push([0,i,0.6]);
+  if (i != 0) links.push([i-1,i,0.6]);
+  if (i > 1) links.push([i-2,i,0.6]);
+}
+
+ctx.lineWidth = 0.01;
+
+setInterval(function () {
+    ctx.fillStyle = 'rgba(255,255,255, 0.9)';
+    ctx.fillRect(-2,-2,4,4);
+
+    for (var constraintI = 0; constraintI < 4; ++constraintI) {
+      points[0].x = Math.sin(tick*0.3)*0.5*Math.cos(tick*0.07);
+      points[0].y = Math.cos(tick*0.2)*0.5*Math.cos(tick*0.09);
+      for (var i = 0; i < links.length; ++i) {
+        var link = links[i];
+        var dir = points[link[1]].sub(points[link[0]]);
+        var len = dir.len()+0.000001;
+        var fact = (len-link[2])/len;
+        var correction = dir.mul(fact/2);
+        points[link[0]] = points[link[0]].add(correction);
+        points[link[1]] = points[link[1]].add(correction.mul(-1));
+      }
+    }
+    // verlet
+    for (var i = 0; i < points.length; ++i) {
+      var newPoint = points[i].mul(2).sub(prevPoints[i])/*.add(new Point(0,0.01))*/;
+      prevPoints[i] = points[i];
+      points[i] = newPoint;
+    }
+
+    for (var i = 0; i < points.length; ++i) {
+        ctx.fillStyle = 'hsla(' + (i/points.length*360) + ', 100%, 50%, 0.7)';
+        ctx.beginPath();
+        ctx.arc(points[i].x, points[i].y, 0.05, 0, 2*Math.PI, true);
+        ctx.fill();
+    }
+    for (var i = 0; i < links.length; ++i) {
+      ctx.beginPath();
+      ctx.strokeStyle = 'hsla(' + (i/links.length*360) + ', 100%, 50%, 0.2)';
+      ctx.moveTo(points[links[i][0]].x, points[links[i][0]].y);
+      ctx.lineTo(points[links[i][1]].x, points[links[i][1]].y);
+      ctx.stroke();
+    }
+    tick += 1;
+}, 50);
+
+</script>
+</body>
+</html>

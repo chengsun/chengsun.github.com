@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+canvas {
+    background-color: white;
+}
+</style>
+</head>
+<body id="b">
+<canvas id="c" width="500" height="500">asdf</canvas>
+<script type="text/javascript">
+var c = document.getElementById('c');
+var ctx = c.getContext('2d');
+ctx.translate(c.width/2,c.height/2);
+ctx.scale(c.width/4,c.height/4);
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+function matrixProduct(a, b) {
+    var cw = b[0].length,
+        ch = a.length,
+        cn = a[0].length;
+    if (cn != b.length) throw new Error("dimension mismatch");
+    c = [];
+    c.length = ch;
+    for (var cr = 0; cr < ch; ++cr) {
+        c[cr] = [];
+        c[cr].length = cw;
+        for (var cc = 0; cc < cw; ++cc) {
+            c[cr][cc] = 0;
+            for (var cj = 0; cj < cn; ++cj) {
+                c[cr][cc] += a[cr][cj] * b[cj][cc];
+            }
+        }
+    }
+    return c;
+}
+// matrix product for the special case where p is a column vector expressed as an array
+function transformProduct(m, p) {
+    if (m.length !== p.length) throw new Error("dimension mismatch");
+    var outp = []; outp.length = p.length;
+    for (var r = 0; r < m.length; ++r) {
+        outp[r] = 0;
+        for (var j = 0; j < p.length; ++j) {
+            outp[r] += m[r][j] * p[j];
+        }
+    }
+    return outp;
+}
+function scaleVector(v, s) {
+  return [v[0]*s, v[1]*s, v[2]*s];
+}
+function vectorProduct(a, b) {
+  return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+}
+function scalarProduct(a, b) {
+  return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+}
+function modulus(a) {
+  return Math.sqrt(a[0]*a[0] + a[1]*a[1] + a[2]*a[2]);
+}
+
+var tick = 0;
+
+var points = [];
+for (var i = 0; i < 1000; ++i) {
+  var a = [Math.random() * 2*Math.PI, Math.random() * 2*Math.PI, Math.random() * 2*Math.PI];
+  points.push([[Math.cos(a[0])], [Math.cos(a[1])], [Math.cos(a[2])]]);
+}
+
+setInterval(function () {
+    ctx.fillStyle = 'rgba(255,255,255, 0.5)';
+    ctx.fillRect(-2,-2,4,4);
+
+    var rotx = tick * 0.14, roty = tick * 0.17, s = Math.sin(tick/10)/2+.75;
+    var mx =
+        [[1,0,0],
+         [0, Math.cos(rotx), -Math.sin(rotx)],
+         [0, Math.sin(rotx), Math.cos(rotx)]];
+    var my =
+        [[Math.cos(roty),0,Math.sin(roty)],
+         [0, 1, 0],
+         [-Math.sin(roty),0 , Math.cos(roty)]];
+    var ms =
+        [[s, 0, 0],
+         [0, s, 0],
+         [0, 0, s]];
+    var rotm = matrixProduct(mx, my);
+    var mm = matrixProduct(ms, rotm);
+
+    for (var i = 0; i < points.length; ++i) {
+        var pointmod = modulus(points[i]);
+        var scale = 1/Math.pow(pointmod, 1-s);
+        var warpedpoint = scaleVector(points[i], scale);
+        var finalpoint = transformProduct(mm, warpedpoint);
+        ctx.fillStyle = 'hsla(' + (i/points.length*360) + ', 100%, 50%, ' + (0.3-finalpoint[2]/5) + ')';
+        ctx.beginPath();
+        ctx.arc(finalpoint[0], finalpoint[1], s*0.05, 0, 2*Math.PI, true);
+        ctx.fill();
+    }
+    tick += 1;
+}, 50);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<!-- http://gamedev.tutsplus.com/tutorials/implementation/simulate-fabric-and-ragdolls-with-simple-verlet-integration/ -->
+<html>
+<head>
+<style type="text/css">
+canvas {
+    background-color: white;
+}
+</style>
+</head>
+<body id="b">
+  <h1 style="text-align:center">Computer Science Society</h1>
+<canvas id="c" width="500" height="500">asdf</canvas>
+<canvas id="ctmp" style="display:none;" width="500" height="500">asdf</canvas>
+<div><input type="checkbox" onclick="window.demo = !window.demo"/></div>
+<script type="text/javascript">
+  window.demo = false;
+var c = document.getElementById('c');
+var ctx = c.getContext('2d');
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+Point.prototype = {
+  clone: function () {
+    return new Point(this.x, this.y);
+  },
+  add: function (p) {
+    return new Point(this.x+p.x, this.y+p.y);
+  },
+  sub: function (p) {
+    return new Point(this.x-p.x, this.y-p.y);
+  },
+  mul: function (n) {
+    return new Point(this.x*n, this.y*n);
+  },
+  div: function (n) {
+    return new Point(this.x/n, this.y/n);
+  },
+  dot: function (p) {
+    return new Point(this.x*p.x, this.y*p.y);
+  },
+  lerp: function (p, i) {
+    return new Point(this.x + (p.x-this.x)*i, this.y + (p.y-this.y)*i);
+  },
+  cross: function (p) {
+    return this.x*p.y - this.y*p.x;
+  },
+  ang: function (p) {
+    //return Math.acos(this.dot(p)/(this.len()*p.len()));
+    return Math.atan2(this.x*p.y - this.y*p.x, this.x*p.x + this.y*p.y);
+  },
+  len: function () {
+    return Math.sqrt(this.x*this.x + this.y*this.y);
+  },
+  dist: function (p) {
+    return this.sub(p).len();
+  }
+};
+
+function isIntersecting(p, p2, q, q2)
+{
+  var r = p2.sub(p), s = q2.sub(q);
+  var diff = q.sub(p);
+  var rxs = r.cross(s);
+  if (Math.abs(rxs) < 1e-7) return false;
+  var pSol = diff.cross(s) / rxs;
+  var qSol = diff.cross(r) / rxs;
+  return (pSol >= 0 && pSol <= 1 && qSol >= 0 && qSol <= 1);
+}
+
+var tick = 1;
+
+var prevPoints = [], points = [], links = [], obstacles = [], bloods = [], prevBloods = [];
+for (var i = 0; i < 9; ++i) {
+  var a = [Math.random() * 2*Math.PI, Math.random() * 2*Math.PI];
+  points.push(new Point(Math.cos(a[0]), Math.cos(a[1])));
+  prevPoints.push(new Point(Math.cos(a[0]), Math.cos(a[1])));
+  /*if (i != 0) links.push([i-1,i,0.6]);
+  if (i > 1) links.push([i-2,i,0.6]);*/
+}
+links.push([0,1,30]);
+links.push([1,2,60]);
+links.push([1,3,60]);
+links.push([1,4,40]);
+links.push([4,5,60]);
+links.push([4,6,60]);
+
+ctx.lineWidth = 3;
+
+var tgtX = 0, tgtY = 0;
+
+c.onmousemove = function (e) {
+  if (!demo) {
+    tgtX = e.hasOwnProperty('offsetX') ? e.offsetX : e.layerX;
+    tgtY = e.hasOwnProperty('offsetY') ? e.offsetY : e.layerY;
+  } else {
+    tgtX = 250;
+    tgtY = 250;
+  }
+    console.log(points[0]);
+}
+
+setInterval(function () {
+    ctx.fillStyle = 'rgba(128,128,255, 1.0)';
+    ctx.fillRect(0,0,500,500);
+
+    // resolve constraints
+    for (var constraintI = 0; constraintI < 3; ++constraintI) {
+      points[0].x = tgtX;
+      points[0].y = tgtY;
+      for (var i = 0; i < links.length; ++i) {
+        var link = links[i];
+        var dir = points[link[1]].sub(points[link[0]]);
+        var len = dir.len();
+        var fact = (len-link[2])/len;
+        var correction = dir.mul(fact/2);
+        points[link[0]] = points[link[0]].add(correction);
+        points[link[1]] = points[link[1]].add(correction.mul(-1));
+      }
+    }
+    // verlet
+    for (var i = 0; i < points.length; ++i) {
+      var newPoint = points[i].mul(2).sub(prevPoints[i]);
+      if (demo) {
+        newPoint = newPoint.add(new Point(10*Math.cos(tick), 3*Math.sin(tick)));
+      } else {
+        newPoint = newPoint.add(new Point(0,1));
+      }
+      prevPoints[i] = points[i];
+      points[i] = newPoint;
+    }
+    for (var i = 0; i < bloods.length; ++i) {
+      var newBlood = bloods[i].mul(2).sub(prevBloods[i]).add(new Point(0,1));
+      prevBloods[i] = bloods[i];
+      bloods[i] = newBlood;
+      if (!(bloods[i].x >= 0 && bloods[i].x <= 500 && bloods[i].y >= 0 && bloods[i].y <= 500)) {
+        bloods.splice(i, 1);
+        prevBloods.splice(i, 1);
+        --i;
+      }
+    }
+
+    function randomObstacle() {
+      return new Point(Math.floor(Math.random() * 500), 0);
+    }
+
+    // add obstacles
+    if (tick % 33 == 0 && (!demo || obstacles.length < 20)) {
+      obstacles.push(randomObstacle());
+    }
+    for (var i = 0; i < obstacles.length; ++i) {
+      var oldObstacle = obstacles[i].clone();
+      obstacles[i].y += 5;
+      if (obstacles[i].y > 500) {
+        obstacles[i] = randomObstacle();
+      } else {
+        for (var k = 0; k <= 1; k += 0.1) {
+          for (var j = 0; j < links.length; ++j) {
+            if (isIntersecting(points[links[j][0]].lerp(prevPoints[links[j][0]], k),
+                               points[links[j][1]].lerp(prevPoints[links[j][1]], k),
+                               oldObstacle, obstacles[i])) {
+              for (var x = 0; x <= 1; x += 0.05) {
+                var a = [Math.random() * 2*Math.PI, Math.random() * 2*Math.PI];
+                var blood = points[links[j][0]].lerp(points[links[j][1]], x);
+                bloods.push(blood);
+                prevBloods.push(new Point(blood.x - 10*Math.cos(a[0]), blood.y - 3*Math.cos(a[1])));
+              }
+              if (!window.demo) {
+                links.splice(j, 1);
+                --j;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // draw limbs
+    ctx.strokeStyle = '#FFFFFF';
+    for (var i = 0; i < links.length; ++i) {
+      ctx.beginPath();
+      //ctx.strokeStyle = 'hsla(' + (i/links.length*360) + ', 100%, 50%, 0.2)';
+      ctx.moveTo(points[links[i][0]].x, points[links[i][0]].y);
+      ctx.lineTo(points[links[i][1]].x, points[links[i][1]].y);
+      ctx.stroke();
+    }
+
+    // draw head
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.arc(points[0].x, points[0].y, 20, 0, 2*Math.PI, true);
+    ctx.fill();
+
+    // draw obstacles
+    ctx.fillStyle = '#000000';
+    for (var i = 0; i < obstacles.length; ++i) {
+      ctx.beginPath();
+      ctx.arc(obstacles[i].x, obstacles[i].y, 2, 0, 2*Math.PI, true);
+      ctx.fill();
+    }
+
+    // draw blood
+    ctx.fillStyle = '#FF0000';
+    for (var i = 0; i < bloods.length; ++i) {
+      ctx.beginPath();
+      ctx.arc(bloods[i].x, bloods[i].y, 2, 0, 2*Math.PI, true);
+      ctx.fill();
+    }
+
+    tick += 1;
+}, 50);
+
+</script>
+<div>
+<button onclick="location.reload()">Restart?</button>
+</div>
+</body>
+</html>

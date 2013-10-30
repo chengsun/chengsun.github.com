@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<!-- http://graphics.cs.cmu.edu/nsp/course/15-869/2006/papers/jakobsen.htm -->
+<html>
+<head>
+<style type="text/css">
+  html, body {
+    margin: 0;
+  }
+canvas {
+    background-color: white;
+}
+</style>
+</head>
+<body id="b">
+<canvas id="c" width="500" height="500">asdf</canvas>
+<div>
+<button onclick="setMode(new Simulator(builder));">Start</button>
+<button onclick="setMode(builder);">Stop</button>
+</div>
+<div id="info">.</div>
+<div>
+<input type="text" id="saveload" value="" autocomplete="off" />
+<button onclick="document.getElementById('saveload').value = builder.serialise();">Save</button>
+<button onclick="builder.unserialise(document.getElementById('saveload').value);">Load</button>
+</div>
+<script type="text/javascript">
+
+if (typeof Object.create !== 'function') {
+    Object.create = function (o) {
+        function F() {}
+        F.prototype = o;
+        return new F();
+    };
+}
+
+var c = document.getElementById('c');
+var ctx = c.getContext('2d');
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+Point.prototype = {
+  clone: function () {
+    return new Point(this.x, this.y);
+  },
+  add: function (p) {
+    return new Point(this.x+p.x, this.y+p.y);
+  },
+  sub: function (p) {
+    return new Point(this.x-p.x, this.y-p.y);
+  },
+  mul: function (n) {
+    return new Point(this.x*n, this.y*n);
+  },
+  div: function (n) {
+    return new Point(this.x/n, this.y/n);
+  },
+  dot: function (p) {
+    return this.x*p.x + this.y*p.y;
+  },
+  lerp: function (p, i) {
+    return new Point(this.x + (p.x-this.x)*i,
+                     this.y + (p.y-this.y)*i);
+  },
+  cross: function (p) {
+    return this.x*p.y - this.y*p.x;
+  },
+  ang: function (p) {
+    return Math.atan2(this.cross(p), this.dot(p));
+  },
+  // the angle formed by the line a-this, and this-c
+  ang2: function (a, c) {
+    return a.sub(this).ang(c.sub(this));
+  },
+  rotAbout: function (p, theta) {
+    var sin = Math.sin(theta),
+        cos = Math.cos(theta),
+        dx = this.x - p.x,
+        dy = this.y - p.y;
+    return new Point(cos*dx - sin*dy + p.x,
+                     sin*dx + cos*dy + p.y);
+  },
+  len2: function () {
+    return this.dot(this);
+  },
+  len: function () {
+    return Math.sqrt(this.len2());
+  },
+  dist2: function (p) {
+    return this.sub(p).len2();
+  },
+  dist: function (p) {
+    return this.sub(p).len();
+  },
+  distLine: function (q1, q2) {
+    var r = q2.sub(q1);
+    var rlen2 = r.len2();
+    if (rlen2 == 0) return q1.dist(this);
+    var t = this.sub(q1).dot(r) / rlen2;
+    if (t < 0) return q1.dist(this);
+    if (t > 1) return q2.dist(this);
+    return q1.lerp(q2, t).dist(this);
+  },
+};
+
+function isIntersecting(p, p2, q, q2)
+{
+  var r = p2.sub(p), s = q2.sub(q);
+  var diff = q.sub(p);
+  var rxs = r.cross(s);
+  if (Math.abs(rxs) < 1e-7) return false;
+  var pSol = diff.cross(s) / rxs;
+  var qSol = diff.cross(r) / rxs;
+  return (pSol >= 0 && pSol <= 1 && qSol >= 0 && qSol <= 1);
+}
+
+
+
+var materials = [
+  {
+    name: "Iron",
+    lengthFactor: 1,
+    angStiffness: 1.1,
+    angLimit: 3 * Math.PI / 180,
+    linearStiffness: 1,
+    tensionLimit: 1.01,
+    compressionLimit: 0.99,
+    density: 3,
+    colour: "#505050"
+  },
+  {
+    name: "Steel",
+    lengthFactor: 1,
+    angStiffness: 0.8,
+    angLimit: 4 * Math.PI / 180,
+    linearStiffness: 1,
+    tensionLimit: 1.02,
+    compressionLimit: 0.98,
+    density: 2,
+    colour: "#C0C0C0"
+  },
+  {
+    name: "Cable",
+    lengthFactor: 0.9999999,
+    angStiffness: 0,
+    angLimit: 360 * Math.PI / 180,
+    linearStiffness: 1,
+    tensionLimit: 1.10,
+    compressionLimit: 0.0,
+    density: 1,
+    colour: "#3030A0"
+  }
+];
+
+
+
+function Node(p) {
+  this.p = p;
+  this.prevP = p.clone();
+  this.fixed = false;
+  this.finalised = false;
+  this.selected = false;
+  this.links = [];
+
+  this.mass = 0;
+}
+Node.prototype = {
+  clone: function () {
+    node = new Node(this.p.clone());
+    node.fixed = this.fixed;
+    node.finalised = this.finalised;
+    node.links = [];
+    return node;
+  }
+};
+function Link(n1, n2) {
+  this.material = null;
+  this.n1 = n1;
+  this.n2 = n2;
+  this.selected = false;
+  if (n1) n1.links.push(this);
+  if (n2) n2.links.push(this);
+}
+
+function ModeBase() {
+  this.nodes = [];
+  this.links = [];
+  this.drawStyle = {
+    background: "#FFFFFF",
+    drawFinalisedNodes: true,
+    drawMaterialStress: false
+  };
+}
+ModeBase.prototype = {
+  start: function () {this.draw();},
+  stop: function () {},
+  onMouseDown: function () {},
+  onMouseMove: function (x, y) {},
+  onMouseUp: function () {},
+  onKeyDown: function (c) {},
+  onKeyUp: function (c) {},
+  draw: function () {
+    ctx.fillStyle = this.drawStyle.background;
+    ctx.fillRect(0,0,c.width,c.height);
+
+    // draw links
+    for (var i = 0; i < this.links.length; ++i) {
+      var link = this.links[i];
+      if (link.selected) {
+        ctx.lineWidth = 20;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = 'hsla(20, 100%, 50%, 0.4)';
+        ctx.beginPath();
+        ctx.moveTo(link.n1.p.x, link.n1.p.y);
+        ctx.lineTo(link.n2.p.x, link.n2.p.y);
+        ctx.stroke();
+      }
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'square';
+      if (!this.drawStyle.drawMaterialStress) {
+        ctx.strokeStyle = materials[link.material].colour;
+      } else {
+        var distRatio = link.n1.p.dist(link.n2.p) / link.tgtLength;
+        var compLimit = materials[link.material].compressionLimit,
+            tensLimit = materials[link.material].tensionLimit;
+        if (distRatio < 1) {
+          ctx.strokeStyle = 'hsl(0, ' + (1000 * (1 - distRatio) / (1 - compLimit)).toFixed() + '%, 50%)';
+        } else {
+          ctx.strokeStyle = 'hsl(240, ' + (1000 * (distRatio - 1) / (tensLimit - 1)).toFixed() + '%, 50%)';
+        }
+      }
+      ctx.beginPath();
+      ctx.moveTo(link.n1.p.x, link.n1.p.y);
+      ctx.lineTo(link.n2.p.x, link.n2.p.y);
+      ctx.stroke();
+    }
+
+    // draw nodes
+    for (var i = 0; i < this.nodes.length; ++i) {
+      var node = this.nodes[i];
+      if (node.selected) {
+        ctx.fillStyle = 'hsla(' + (node.fixed ? 210 : 90) + ', 100%, 50%, 0.4)';
+        ctx.beginPath();
+        ctx.arc(node.p.x, node.p.y, 20, 0, 2*Math.PI, true);
+        ctx.fill();
+      }
+      if (!(node.finalised && this.drawStyle.drawFinalisedNodes || node.fixed)) continue;
+      ctx.fillStyle = 'hsla(' + (node.fixed ? 210 : 90) + ', 100%, 50%, 1.0)';
+      ctx.beginPath();
+      ctx.arc(node.p.x, node.p.y, 4, 0, 2*Math.PI, true);
+      ctx.fill();
+    }
+  },
+  deleteLink: function (link) {
+    var idx = this.links.indexOf(link);
+    if (idx >= 0) this.links.splice(idx, 1);
+    else console.warn("Warning: could not find link @ deleteLink");
+    var nodes = [link.n1, link.n2];
+    for (var i = 0; i < nodes.length; ++i) {
+      var node = nodes[i];
+      if (node === null) continue;
+      idx = node.links.indexOf(link);
+      if (idx >= 0) node.links.splice(idx, 1);
+      else console.warn("Warning: could not find node-link @ deleteLink");
+      if (!node.fixed && node.links.length === 0) {
+        var idx = this.nodes.indexOf(node);
+        if (idx >= 0) this.nodes.splice(idx, 1);
+        else console.warn("Warning: could not find node @ deleteLink");
+      }
+    }
+  }
+};
+
+function Builder() {
+  ModeBase.call(this);
+  this.drawStyle.background = '#000000';
+
+  this.curBuildingNode = null;
+  this.curBuildingLink = null;
+  this.closestNode = null;
+  this.closestLink = null;
+  this.mouseP = new Point();
+  this.mouseDown = false;
+  this.mouseRightClick = null;
+  this.material = null;
+  this.setMaterial(0);
+}
+Builder.prototype = Object.create(ModeBase.prototype);
+Builder.prototype.setMaterial = function (t) {
+  if (this.mouseDown) return;
+  var materialName = null;
+  if (t >= materials.length) return;
+  this.material = t;
+  document.getElementById('info').innerHTML = materials[t].name;
+};
+Builder.prototype.onMouseDown = function (rightClick) {
+  if (this.mouseDown) return;
+  this.mouseDown = true;
+  this.mouseRightClick = rightClick;
+  if (this.mouseRightClick) {
+    if (this.closestNode !== null) {
+    }
+  } else {
+    if (this.closestNode !== null) {
+      this.curBuildingNode = new Node(this.mouseP.clone());
+      this.nodes.push(this.curBuildingNode);
+      this.curBuildingLink = new Link(this.closestNode, null);
+      this.curBuildingLink.n2 = this.curBuildingNode;
+      this.curBuildingLink.material = this.material;
+      this.links.push(this.curBuildingLink);
+    }
+  }
+  this.draw();
+}
+Builder.prototype.onMouseUp = function (rightClick) {
+  if (!this.mouseDown || this.mouseRightClick !== rightClick) return;
+  if (this.mouseRightClick) {
+    if (this.closestLink !== null) {
+      if (this.closestLink.selected) {
+        this.deleteLink(this.closestLink);
+      }
+      this.closestLink = null;
+    }
+  } else {
+    if (this.curBuildingLink !== null) {
+      if (this.curBuildingLink.n2 !== this.curBuildingNode) {
+        var idx = this.nodes.indexOf(this.curBuildingNode);
+        if (idx >= 0) this.nodes.splice(idx, 1);
+        else console.warn("Warning: could not find temp node @ material mouseup");
+        var alreadyExists = false;
+        for (var i = 0; i < this.curBuildingLink.n2.links.length; ++i) {
+          var link = this.curBuildingLink.n2.links[i];
+          if ((link.n1 === this.curBuildingLink.n1 &&
+               link.n2 === this.curBuildingLink.n2) ||
+              (link.n1 === this.curBuildingLink.n2 &&
+               link.n2 === this.curBuildingLink.n1)) {
+            alreadyExists = true;
+            break;
+          }
+        }
+        if (alreadyExists) {
+          this.curBuildingLink.n2 = null;
+          this.deleteLink(this.curBuildingLink);
+        } else {
+          this.curBuildingLink.n2.links.push(this.curBuildingLink);
+        }
+      } else {
+        this.curBuildingNode.finalised = true;
+        this.curBuildingNode.links.push(this.curBuildingLink);
+      }
+      this.curBuildingNode = null;
+      this.curBuildingLink = null;
+    }
+    this.findClosest();
+  }
+  this.mouseDown = false;
+  this.mouseRightClick = null;
+  this.draw();
+}
+Builder.prototype.onMouseMove = function (x, y) {
+  this.mouseP = new Point(x, y);
+  if (this.mouseDown) {
+    if (this.mouseRightClick) {
+      if (this.closestNode !== null) {
+        if (!this.closestNode.fixed) {
+          this.closestNode.p = this.mouseP.clone();
+        }
+      }
+    } else {
+      if (this.curBuildingLink !== null) {
+        this.curBuildingNode.p = this.mouseP.clone();
+        this.findClosest(true, false);
+        this.curBuildingLink.n2 = this.closestNode || this.curBuildingNode;
+      }
+    }
+    if (this.closestLink !== null) {
+      var dist = this.mouseP.distLine(this.closestLink.n1.p, this.closestLink.n2.p);
+      this.closestLink.selected = (dist < 10);
+    }
+  } else {
+    this.findClosest();
+  }
+  this.draw();
+};
+Builder.prototype.findClosest = function (findNode, findLink) {
+    if (typeof(findNode) === "undefined") findNode = true;
+    if (typeof(findLink) === "undefined") findLink = true;
+    if (this.closestNode !== null) this.closestNode.selected = false;
+    if (this.closestLink !== null) this.closestLink.selected = false;
+    var closestDist = 12;
+    this.closestNode = null;
+    this.closestLink = null;
+    if (findNode) {
+      for (var i = 0; i < this.nodes.length; ++i) {
+        var node = this.nodes[i];
+        if (!node.finalised) continue;
+        var dist = this.mouseP.dist(node.p);
+        if (closestDist > dist) {
+          closestDist = dist;
+          this.closestNode = node;
+        }
+      }
+    }
+    if (this.closestNode !== null) {
+        this.closestNode.selected = true;
+    } else if (findLink) {
+      for (var i = 0; i < this.links.length; ++i) {
+        var link = this.links[i];
+        var dist = this.mouseP.distLine(link.n1.p, link.n2.p);
+        if (closestDist > dist) {
+          closestDist = dist;
+          this.closestLink = link;
+        }
+      }
+      if (this.closestLink !== null) {
+          this.closestLink.selected = true;
+      }
+    }
+};
+Builder.prototype.serialise = function () {
+  var out = [];
+  out.push(this.nodes.length);
+  out.push(this.links.length);
+  for (var i = 0; i < this.nodes.length; ++i) {
+    var node = this.nodes[i];
+    out.push(node.p.x.toFixed());
+    out.push(node.p.y.toFixed());
+    out.push(+node.fixed);
+  }
+  for (var i = 0; i < this.links.length; ++i) {
+    var link = this.links[i];
+    var idx;
+    idx = this.nodes.indexOf(link.n1);
+    if (idx >= 0) out.push(idx);
+    else console.warn("Node not found @ serialise");
+    idx = this.nodes.indexOf(link.n2);
+    if (idx >= 0) out.push(idx);
+    else console.warn("Node not found @ serialise");
+    out.push(link.material);
+  }
+  return out.join(' ');
+};
+Builder.prototype.unserialise = function (a) {
+  try {
+    var sin = a.split(' '), ain = [];
+    ain.length = sin.length;
+    for (var i = 0; i < ain.length; ++i) {
+      ain[i] = +sin[i];
+    }
+    this.nodes.length = ain.shift();
+    this.links.length = ain.shift();
+    for (var i = 0; i < this.nodes.length; ++i) {
+      var node = new Node(new Point(ain.shift(), ain.shift()));
+      node.fixed = !!ain.shift();
+      node.finalised = true;
+      this.nodes[i] = node;
+    }
+    for (var i = 0; i < this.links.length; ++i) {
+      var link = new Link(this.nodes[ain.shift()], this.nodes[ain.shift()]);
+      link.material = ain.shift();
+      this.links[i] = link;
+    }
+  } catch (e) {
+    this.nodes.length = 0;
+    this.links.length = 0;
+  }
+  this.draw();
+};
+Builder.prototype.onKeyUp = function (c) {
+  if (c >= 48 && c <= 57) {
+    this.setMaterial(c-48);
+  }
+}
+
+function Simulator(builder) {
+  ModeBase.call(this);
+  this.drawStyle.background = '#C0C0FF';
+  this.drawStyle.drawFinalisedNodes = false;
+  this.drawStyle.drawMaterialStress = true;
+
+  this.tick = 0;
+
+  var nodeMap = {}; // map from index in builder.nodes to index in this.nodes
+  for (var i = 0; i < builder.links.length; ++i) {
+    var link = builder.links[i];
+    var dist = link.n1.p.dist(link.n2.p);
+    var nSegments = Math.round(dist / 15);
+    var linkMass = dist * materials[link.material].density;
+    var massPerNode = linkMass / (nSegments+1);
+
+    var endNodes = [link.n1, link.n2];
+    for (var j = 0; j < endNodes.length; ++j) {
+      var endNode = endNodes[j];
+      var ni = builder.nodes.indexOf(endNode);
+      if (typeof(nodeMap[ni]) === "undefined") {
+        nodeMap[ni] = this.nodes.length;
+        var newNode = endNode.clone();
+        newNode.tgtP = newNode.p.clone();
+        this.nodes.push(newNode);
+      }
+      this.nodes[nodeMap[ni]].mass += massPerNode;
+    }
+
+    var prevInterNode = this.nodes[nodeMap[builder.nodes.indexOf(link.n1)]];
+    for (var s = 1; s <= nSegments; ++s) {
+      var interNode = null;
+      if (s < nSegments) {
+        interNode = new Node(link.n1.p.lerp(link.n2.p, s/nSegments));
+        interNode.mass = massPerNode;
+        this.nodes.push(interNode);
+      } else {
+        interNode = this.nodes[nodeMap[builder.nodes.indexOf(link.n2)]];
+      }
+      var interLink = new Link(prevInterNode, interNode);
+      interLink.id = i;
+      interLink.tgtLength = materials[link.material].lengthFactor * dist/nSegments;
+      interLink.material = link.material;
+      this.links.push(interLink);
+      prevInterNode = interNode;
+    }
+  }
+
+};
+
+Simulator.prototype = Object.create(ModeBase.prototype);
+Simulator.prototype.start = function () {
+  this.intervalID = setInterval(this.simStep.bind(this), 40);
+};
+Simulator.prototype.stop = function () {
+  clearInterval(this.intervalID);
+  this.intervalID = -1;
+};
+
+Simulator.prototype.simStep = function () {
+  for (var step = 0; step < 2; ++step) {
+    // verlet
+    for (var i = 0; i < this.nodes.length; ++i) {
+      var node = this.nodes[i];
+      var newPoint = node.p.mul(2).sub(node.prevP).add(new Point(0,0.1));
+      node.prevP = node.p;
+      node.p = newPoint;
+    }
+    // resolve constraints
+    for (var constraintI = 0; constraintI < 50; ++constraintI) {
+      var rev = true;//(constraintI % 2) === 0;
+      for (var i = rev ? this.nodes.length - 1 : 0;
+                   rev ? i >= 0 : i < this.nodes.length;
+                   rev ? --i : ++i) {
+        var node = this.nodes[i];
+        if (node.fixed) {
+          // fixed node
+          node.p = node.tgtP.clone();
+        }
+        if (!node.finalised) {
+          // intermediate node
+          if (node.links.length !== 2) {
+            console.warn("Intermediate node does not have two links");
+          } else if (materials[node.links[0].material].angStiffness > 0) {
+            var node1 = node.links[0].n1,
+                node2 = node.links[1].n2;
+            if (node1 === node || node2 === node) {
+              console.warn("Intermediate node's two links have nodes in wrong order");
+            } else {
+              var angle = node.p.ang2(node1.p, node2.p);
+              var angleCorrection = angle - Math.PI;
+              if (angleCorrection <= -Math.PI)
+                angleCorrection += 2*Math.PI;
+              else if (angleCorrection >= Math.PI)
+                angleCorrection -= 2*Math.PI;
+              if (Math.abs(angleCorrection) > materials[node.links[0].material].angLimit) {
+                /*
+                node.finalised = true;
+                var nodeDup = node.clone();
+                this.nodes.push(nodeDup);
+                node.links[0].n2 = nodeDup;
+                nodeDup.links = [node.links[0]];
+                node.links = [node.links[1]];
+                */
+                this.deleteLink(node.links[0]);
+                //this.deleteLink(node.links[1]);
+                node.finalised = true;
+                node1.finalised = true;
+                //node2.finalised = true;
+                break;
+              } else {
+                angleCorrection *= 0.3 * materials[node.links[0].material].angStiffness;
+                var newP1 = node1.p.rotAbout(node.p, angleCorrection),
+                    newP2 = node2.p.rotAbout(node.p, -angleCorrection);
+                var newP = node.p.rotAbout(newP1, angleCorrection)
+                                 .rotAbout(newP2, -angleCorrection);
+                node1.p = newP1;
+                node2.p = newP2;
+                node.p = newP;
+              }
+            }
+          }
+        }
+      }
+      for (var i = 0; i < this.links.length; ++i) {
+        var link = this.links[i];
+        var dir = link.n2.p.sub(link.n1.p);
+        var len = dir.len();
+        var invMass1 = 1/link.n1.mass,
+            invMass2 = 1/link.n2.mass;
+        var fact = materials[link.material].linearStiffness * (len-link.tgtLength)/(len*(invMass1+invMass2));
+        link.n1.p = link.n1.p.add(dir.mul(fact*invMass1));
+        link.n2.p = link.n2.p.add(dir.mul(-fact*invMass2));
+      }
+    }
+    // check links for breakage
+    for (var i = 0; i < this.links.length; ++i) {
+      var link = this.links[i];
+      var dist = link.n2.p.dist(link.n1.p);
+      var distRatio = dist / link.tgtLength;
+      if (distRatio > materials[link.material].tensionLimit ||
+          distRatio < materials[link.material].compressionLimit) {
+        /*
+        var node = link.n1;
+        node.finalised = true;
+        var nodeDup = node.clone();
+        this.nodes.push(nodeDup);
+        var idx = node.links.indexOf(link);
+        if (idx >= 0) node.links.splice(idx, 1);
+        else console.warn("Warning: could not find node-link @ simulate linearbreakage");
+        nodeDup.links = [link];
+        link.n1 = nodeDup;
+        */
+        this.deleteLink(link);
+        link.n1.finalised = true;
+        link.n2.finalised = true;
+      }
+      // TODO
+    }
+  }
+
+  this.draw();
+  this.tick += 1;
+};
+
+var builder = new Builder();
+var currentMode = builder;
+
+builder.nodes.push(new Node(new Point(100, 300)));
+builder.nodes[0].fixed = true;
+builder.nodes[0].finalised = true;
+builder.nodes.push(new Node(new Point(400, 300)));
+builder.nodes[1].fixed = true;
+builder.nodes[1].finalised = true;
+builder.nodes.push(new Node(new Point(100, 100)));
+builder.nodes[2].fixed = true;
+builder.nodes[2].finalised = true;
+builder.nodes.push(new Node(new Point(400, 100)));
+builder.nodes[3].fixed = true;
+builder.nodes[3].finalised = true;
+
+builder.start();
+
+function setMode(mode) {
+  currentMode.stop();
+  currentMode = mode;
+  currentMode.start();
+}
+
+c.onmousemove = function (e) {
+  var tgtX = 0, tgtY = 0;
+
+  tgtX = e.hasOwnProperty('offsetX') ? e.offsetX : e.layerX;
+  tgtY = e.hasOwnProperty('offsetY') ? e.offsetY : e.layerY;
+  currentMode.onMouseMove(tgtX, tgtY);
+};
+c.onmousedown = function (e) {
+  currentMode.onMouseDown(e.button === 2);
+  return false;
+};
+c.onmouseup = function (e) {
+  currentMode.onMouseUp(e.button === 2);
+  return false;
+};
+c.oncontextmenu = function (e) {
+  return false;
+};
+window.onkeydown = function (e) {
+  var code = null;
+  if (e.hasOwnProperty('charCode')) code = e.charCode;
+  else code = e.keyCode;
+  currentMode.onKeyDown(code);
+};
+window.onkeyup = function (e) {
+  var code = null;
+  if (e.hasOwnProperty('charCode')) code = e.charCode;
+  else code = e.keyCode;
+  currentMode.onKeyUp(code);
+};
+
+</script>
+</body>
+</html>
