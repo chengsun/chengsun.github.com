@@ -1,0 +1,154 @@
+<html>
+<head>
+<style type="text/css">
+button {
+	width: 3em;
+	height: 3em;
+}
+</style>
+</head>
+<body id="b">
+<script type="text/javascript">
+
+var colours = ["grey", "blue", "green", "red", "navy", "maroon", "teal", "purple", "black"];
+var playing = true;
+
+var body = document.getElementById('b');
+var w = 20, h = 20, m = 50;
+var v = [], o = [], bs = [];
+var nopened = 0;
+for (var y = 0; y < h; ++y) {
+	v[y] = []; o[y] = []; bs[y] = [];
+	for (var x = 0; x < w; ++x) {
+		var btn = document.createElement('button');
+		btn.innerHTML = "?";
+		btn.onmouseup = (function(x, y) {
+			return function(e) {
+        e = e || window.event;
+				switch (e.button) {
+				case 2:
+					flag(x, y);
+					break;
+        default:
+					openorfill(x, y);
+					break;
+				}
+				return false;
+			}
+		})(x, y);
+		btn.oncontextmenu = function() {
+			return false;
+		};
+		b.appendChild(btn);
+		v[y][x] = 0; o[y][x] = false; bs[y][x] = btn;
+		refresh(x, y);
+	}
+	b.appendChild(document.createElement('br'));
+}
+
+for(var i = m; i-->0;){
+	do {
+		y = Math.floor(Math.random() * h);
+		x = Math.floor(Math.random() * w);
+	} while (v[y][x] < 0);
+	v[y][x] = -99999;
+	for (var dy = -1; dy <= 1; ++dy) {
+		if (y+dy < 0 || y+dy >= h) continue;
+		for (var dx = -1; dx <= 1; ++dx) {
+			if (x+dx < 0 || x+dx >= w) continue;
+			v[y+dy][x+dx] += 1;
+		}
+	}
+}
+
+function flag(x, y) {
+	if (!playing || o[y][x] > 0) return;
+	if (o[y][x] < 0) {
+		o[y][x] = 0;
+	} else {
+		o[y][x] = -1;
+	}
+	refresh(x, y);
+}
+
+function refresh(x, y) {
+	if (!playing) return;
+	if (o[y][x] < 0) {
+		bs[y][x].innerHTML = "?";
+		bs[y][x].style.color = "black";
+		bs[y][x].style.backgroundColor = "yellow";
+		bs[y][x].style.fontWeight = "normal";
+	} else if (o[y][x] == 0) {
+		bs[y][x].innerHTML = "?";
+		bs[y][x].style.color = "black";
+		bs[y][x].style.backgroundColor = "white";
+		bs[y][x].style.fontWeight = "normal";
+	} else {
+		bs[y][x].style.fontWeight = "bold";
+		if (v[y][x] < 0) {
+			bs[y][x].innerHTML = "X";
+			bs[y][x].style.color = "red";
+			bs[y][x].style.backgroundColor = "yellow";
+		} else {
+			bs[y][x].innerHTML = v[y][x];
+			bs[y][x].style.color = colours[v[y][x]];
+			bs[y][x].style.backgroundColor = "lightgrey";
+		}
+	}
+}
+
+function openorfill(x, y) {
+	if (!playing) return;
+	if (o[y][x] > 0) {
+		if (v[y][x] > 0) {
+			var flagsaround = 0;
+			for (var dy = -1; dy <= 1; ++dy) {
+				if (y+dy < 0 || y+dy >= h) continue;
+				for (var dx = -1; dx <= 1; ++dx) {
+					if (x+dx < 0 || x+dx >= w) continue;
+					if (o[y+dy][x+dx] < 0) flagsaround++;
+				}
+			}
+			if (flagsaround == v[y][x]) {
+				for (var dy = -1; dy <= 1; ++dy) {
+					if (y+dy < 0 || y+dy >= h) continue;
+					for (var dx = -1; dx <= 1; ++dx) {
+						if (x+dx < 0 || x+dx >= w) continue;
+						open(x+dx, y+dy);
+					}
+				}
+			}
+		}
+	} else {
+		open(x, y);
+	}
+}
+
+function open(x, y) {
+	if (!playing) return;
+	if (o[y][x]) return;
+	o[y][x] = 1;
+	refresh(x,y);
+	if (v[y][x] < 0) {
+		alert('game over');
+		playing=false;
+	} else {
+		nopened += 1;
+		if (nopened == w*h-m) {
+			alert('you win');
+			playing=false;
+		}
+		if (v[y][x] == 0) {
+			for (var dy = -1; dy <= 1; ++dy) {
+				if (y+dy < 0 || y+dy >= h) continue;
+				for (var dx = -1; dx <= 1; ++dx) {
+					if (x+dx < 0 || x+dx >= w) continue;
+					open(x+dx, y+dy);
+				}
+			}
+		}
+	}
+}
+</script>
+</body>
+</html>
