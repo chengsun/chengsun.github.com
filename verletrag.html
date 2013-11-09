@@ -4,11 +4,8 @@ title: Ragdoll game
 ---
 
 <!-- http://gamedev.tutsplus.com/tutorials/implementation/simulate-fabric-and-ragdolls-with-simple-verlet-integration/ -->
-<canvas id="c" width="500" height="500">asdf</canvas>
-<canvas id="ctmp" style="display:none;" width="500" height="500">asdf</canvas>
-<div><input type="checkbox" onclick="window.demo = !window.demo"/></div>
+<canvas id="c" style="position: relative;" width="500" height="500">asdf</canvas>
 <script type="text/javascript">
-  window.demo = false;
 var c = document.getElementById('c');
 var ctx = c.getContext('2d');
 function Point(x, y) {
@@ -85,14 +82,8 @@ ctx.lineWidth = 3;
 var tgtX = 0, tgtY = 0;
 
 c.onmousemove = function (e) {
-  if (!demo) {
     tgtX = e.hasOwnProperty('offsetX') ? e.offsetX : e.layerX;
     tgtY = e.hasOwnProperty('offsetY') ? e.offsetY : e.layerY;
-  } else {
-    tgtX = 250;
-    tgtY = 250;
-  }
-    console.log(points[0]);
 }
 
 setInterval(function () {
@@ -116,11 +107,7 @@ setInterval(function () {
     // verlet
     for (var i = 0; i < points.length; ++i) {
       var newPoint = points[i].mul(2).sub(prevPoints[i]);
-      if (demo) {
-        newPoint = newPoint.add(new Point(10*Math.cos(tick), 3*Math.sin(tick)));
-      } else {
-        newPoint = newPoint.add(new Point(0,1));
-      }
+      newPoint = newPoint.add(new Point(0,1));
       prevPoints[i] = points[i];
       points[i] = newPoint;
     }
@@ -140,7 +127,7 @@ setInterval(function () {
     }
 
     // add obstacles
-    if (tick % 33 == 0 && (!demo || obstacles.length < 20)) {
+    if (tick % 33 == 0) {
       obstacles.push(randomObstacle());
     }
     for (var i = 0; i < obstacles.length; ++i) {
@@ -160,10 +147,8 @@ setInterval(function () {
                 bloods.push(blood);
                 prevBloods.push(new Point(blood.x - 10*Math.cos(a[0]), blood.y - 3*Math.cos(a[1])));
               }
-              if (!window.demo) {
-                links.splice(j, 1);
-                --j;
-              }
+              links.splice(j, 1);
+              --j;
             }
           }
         }

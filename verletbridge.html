@@ -1,31 +1,44 @@
 ---
+layout: post
+title: Bridge simulation
 ---
-<!DOCTYPE html>
-<!-- http://graphics.cs.cmu.edu/nsp/course/15-869/2006/papers/jakobsen.htm -->
-<html>
-<head>
-<style type="text/css">
-  html, body {
-    margin: 0;
-  }
-canvas {
-    background-color: white;
-}
-</style>
-{% include ga.html %}
-</head>
-<body id="b">
-<canvas id="c" width="500" height="500">asdf</canvas>
+
 <div>
-<button onclick="setMode(new Simulator(builder));">Start</button>
-<button onclick="setMode(builder);">Stop</button>
+  <canvas id="c" style="position: relative;" width="500" height="500">Your browser doesn't support canvas</canvas>
+  <span style="float: left; font-size: 150%;">Current material: <span id="info">Loading...</span></span>
+  <span style="float: right;">
+    <button onclick="setMode(new Simulator(builder));">Start</button>
+    <button onclick="setMode(builder);">Stop</button>
+  </span>
+  <div style="clear: both; border-top: 1px solid black; margin-top: 10px; padding-top: 5px;">
+    <textarea type="text" style="width: 100%;" id="saveload" autocomplete="off"></textarea>
+    <button onclick="document.getElementById('saveload').value = builder.serialise();">Get build code</button>
+    <button onclick="setMode(builder); builder.unserialise(document.getElementById('saveload').value);">Load from code</button>
+    <button onclick="builder.reset();">Reset build</button>
+  </div>
 </div>
-<div id="info">.</div>
-<div>
-<input type="text" id="saveload" value="" autocomplete="off" />
-<button onclick="document.getElementById('saveload').value = builder.serialise();">Save</button>
-<button onclick="builder.unserialise(document.getElementById('saveload').value);">Load</button>
-</div>
+<hr/>
+<h2>Instructions!</h2>
+<ul>
+  <li>Press 0, 1, 2 (not on the numpad) to select between three materials!</li>
+  <li>Left click and drag from an existing point to build a bar of your material!</li>
+  <li>Right click when a bar is highlighted in red to delete it!</li>
+  <li>Right click and drag when a green point is highlighted to move it around!</li>
+  <li>Blue points are fixed points, which can't move. Use them as your starting point for your bridge!</li>
+</ul>
+<h2>Challenges!</h2>
+<ul>
+  <li>
+    <tt>6 3 100 300 1 400 300 1 100 100 1 400 100 1 203 299 0 315 300 0 0 4 0 4 5 0 5 1 0</tt><br/>
+    Without moving the existing green points, can you save this iron platform from collapsing?
+  </li>
+  <li>Can you do the same without using cable?</li>
+  <li>Can you do the same without using the top two fixed points?</li>
+</ul>
+<h2>Demonstrations!</h2>
+<ul>
+  <li><tt>7 16 250 100 1 426 58 0 431 47 0 445 43 0 455 54 0 449 70 0 436 72 0 0 1 2 1 2 1 2 3 1 3 4 1 4 5 1 5 6 1 6 1 1 6 2 1 6 3 1 6 4 1 5 1 1 5 2 1 5 3 1 4 1 1 4 2 1 3 1 1</tt></li>
+</ul>
 <script type="text/javascript">
 
 if (typeof Object.create !== 'function') {
@@ -34,6 +47,23 @@ if (typeof Object.create !== 'function') {
         F.prototype = o;
         return new F();
     };
+}
+
+function relMouseCoords(element, event){
+    var totalOffsetX = 0;
+    var totalOffsetY = 0;
+    var canvasX = 0;
+    var canvasY = 0;
+
+    do {
+        totalOffsetX += element.offsetLeft - element.scrollLeft;
+        totalOffsetY += element.offsetTop - element.scrollTop;
+    } while (element = element.offsetParent);
+
+    canvasX = event.pageX - totalOffsetX - document.body.scrollLeft;
+    canvasY = event.pageY - totalOffsetY - document.body.scrollTop;
+
+    return new Point(canvasX, canvasY);
 }
 
 var c = document.getElementById('c');
@@ -121,14 +151,14 @@ function isIntersecting(p, p2, q, q2)
 
 var materials = [
   {
-    name: "Iron",
+    name: "Brittle Iron",
     lengthFactor: 1,
-    angStiffness: 1.1,
-    angLimit: 3 * Math.PI / 180,
+    angStiffness: 1.06,
+    angLimit: 4 * Math.PI / 180,
     linearStiffness: 1,
     tensionLimit: 1.01,
     compressionLimit: 0.99,
-    density: 3,
+    density: 2.3,
     colour: "#505050"
   },
   {
@@ -137,18 +167,18 @@ var materials = [
     angStiffness: 0.8,
     angLimit: 4 * Math.PI / 180,
     linearStiffness: 1,
-    tensionLimit: 1.02,
+    tensionLimit: 1.025,
     compressionLimit: 0.98,
     density: 2,
     colour: "#C0C0C0"
   },
   {
     name: "Cable",
-    lengthFactor: 0.9999999,
+    lengthFactor: 1,
     angStiffness: 0,
     angLimit: 360 * Math.PI / 180,
     linearStiffness: 1,
-    tensionLimit: 1.10,
+    tensionLimit: 1.05,
     compressionLimit: 0.0,
     density: 1,
     colour: "#3030A0"
@@ -200,8 +230,7 @@ ModeBase.prototype = {
   onMouseDown: function () {},
   onMouseMove: function (x, y) {},
   onMouseUp: function () {},
-  onKeyDown: function (c) {},
-  onKeyUp: function (c) {},
+  onKeyPress: function (c) {},
   draw: function () {
     ctx.fillStyle = this.drawStyle.background;
     ctx.fillRect(0,0,c.width,c.height);
@@ -445,10 +474,10 @@ Builder.prototype.serialise = function () {
 };
 Builder.prototype.unserialise = function (a) {
   try {
-    var sin = a.split(' '), ain = [];
-    ain.length = sin.length;
-    for (var i = 0; i < ain.length; ++i) {
-      ain[i] = +sin[i];
+    var sin = a.replace(/[^ \d]/,'').split(' '), ain = [];
+    for (var i = 0; i < sin.length; ++i) {
+      if (!sin[i]) continue;
+      ain.push(+sin[i]);
     }
     this.nodes.length = ain.shift();
     this.links.length = ain.shift();
@@ -464,14 +493,34 @@ Builder.prototype.unserialise = function (a) {
       this.links[i] = link;
     }
   } catch (e) {
-    this.nodes.length = 0;
-    this.links.length = 0;
+    console.log("Invalid unserialise: resetting.");
+    this.reset();
+    throw e;
   }
   this.draw();
 };
-Builder.prototype.onKeyUp = function (c) {
+Builder.prototype.reset = function () {
+  this.nodes.length = 0;
+  this.links.length = 0;
+  this.nodes.push(new Node(new Point(100, 300)));
+  this.nodes[0].fixed = true;
+  this.nodes[0].finalised = true;
+  this.nodes.push(new Node(new Point(400, 300)));
+  this.nodes[1].fixed = true;
+  this.nodes[1].finalised = true;
+  this.nodes.push(new Node(new Point(100, 100)));
+  this.nodes[2].fixed = true;
+  this.nodes[2].finalised = true;
+  this.nodes.push(new Node(new Point(400, 100)));
+  this.nodes[3].fixed = true;
+  this.nodes[3].finalised = true;
+  this.draw();
+};
+Builder.prototype.onKeyPress = function (c) {
   if (c >= 48 && c <= 57) {
     this.setMaterial(c-48);
+  } else {
+    console.log(c);
   }
 }
 
@@ -643,19 +692,7 @@ Simulator.prototype.simStep = function () {
 var builder = new Builder();
 var currentMode = builder;
 
-builder.nodes.push(new Node(new Point(100, 300)));
-builder.nodes[0].fixed = true;
-builder.nodes[0].finalised = true;
-builder.nodes.push(new Node(new Point(400, 300)));
-builder.nodes[1].fixed = true;
-builder.nodes[1].finalised = true;
-builder.nodes.push(new Node(new Point(100, 100)));
-builder.nodes[2].fixed = true;
-builder.nodes[2].finalised = true;
-builder.nodes.push(new Node(new Point(400, 100)));
-builder.nodes[3].fixed = true;
-builder.nodes[3].finalised = true;
-
+builder.reset();
 builder.start();
 
 function setMode(mode) {
@@ -667,9 +704,12 @@ function setMode(mode) {
 c.onmousemove = function (e) {
   var tgtX = 0, tgtY = 0;
 
+  /*
   tgtX = e.hasOwnProperty('offsetX') ? e.offsetX : e.layerX;
   tgtY = e.hasOwnProperty('offsetY') ? e.offsetY : e.layerY;
-  currentMode.onMouseMove(tgtX, tgtY);
+  */
+  var pt = relMouseCoords(c, e);
+  currentMode.onMouseMove(pt.x, pt.y);
 };
 c.onmousedown = function (e) {
   currentMode.onMouseDown(e.button === 2);
@@ -682,20 +722,8 @@ c.onmouseup = function (e) {
 c.oncontextmenu = function (e) {
   return false;
 };
-window.onkeydown = function (e) {
-  var code = null;
-  if (e.hasOwnProperty('charCode')) code = e.charCode;
-  else code = e.keyCode;
-  currentMode.onKeyDown(code);
-};
-window.onkeyup = function (e) {
-  var code = null;
-  if (e.hasOwnProperty('charCode')) code = e.charCode;
-  else code = e.keyCode;
-  currentMode.onKeyUp(code);
+window.onkeypress = function (e) {
+  currentMode.onKeyPress(e.charCode);
 };
 
 </script>
-{% include sc.html %}
-</body>
-</html>
