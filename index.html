@@ -3,17 +3,17 @@ layout: default
 title: Cheng Sun - Home
 ---
 
-<div class="box">
+<div>
   <h1>Blog</h1>
   <ul>
     {% for post in site.posts %}
       <li>
-        {{ page.date | date: "%Y-%m-%d" }} &endash; <a href="{{ post.url }}">{{ post.title }}</a>
+        {{ post.date | date: "%Y-%m-%d" }} &ndash; <a href="{{ post.url }}">{{ post.title }}</a>
       </li>
     {% endfor %}
   </ul>
 </div>
-<div class="box">
+<div>
   <h1>JavaScript Hackery</h1>
   <ul>
     <li>Revision question sets
@@ -50,7 +50,7 @@ title: Cheng Sun - Home
     <li><a href="snake.html">Snake game in 1K</a></li>
   </ul>
 </div>
-<div class="box">
+<div>
   <h1>Things I do</h1>
   <ul>
     <li>
@@ -67,7 +67,7 @@ title: Cheng Sun - Home
     </li>
   </ul>
 </div>
-<div class="box">
+<div>
   <h1>Other stuff</h1>
   <p>I am a user (and big fan) of <a href="https://www.archlinux.org/">Arch Linux</a>. Give it a try -- it's fun!</p>
   <p>I sometimes play NetHack on <a href="http://alt.org/nethack/plr.php?player=infinigon">NAO</a>.</p>
