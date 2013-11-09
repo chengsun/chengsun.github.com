@@ -17,18 +17,28 @@ style: |
   }
 ---
 
-<textarea id=q></textarea><button onclick=W(C)>Load<button id=S onclick=W(S)>Step</button><p id=i><script>_='Bs=s.toStrg(2@return Array(9-sNjo(\'0\')+sDE!i;throw "Error"DWtry{s()}catch(e){z=e}z~Le(P+1)+StackM+QB(Qz~S"+i+"B(@i"NnerHTML=zDCR=q"Nvalue.toLowerCase(Nsplit(\'n\'@L={DV0;P<R;++P)r==/^([A-Z]+)s+G),G|$([0-9A-F]{2})))?)?:|)#.*|)$/i.exec()	(L[]= L?+": exists"):P@A=[XM=[XVZ=VQ=I==0;"OK",1)DSr=U"End"@1]	(s="1nop1ret11out1jp1jz1jnz1rcall1shl1shr1c1dec1mov1add1sub1and1eor1movi1".dexOf(1+1]+11+i=+3Xv=+6X5>_2]	4(VM.pop()8=I=8]Y"i"prompt("",B(I)2)&%511(Q=v	4]Y"q"?A[v]15>%<1+J	`%M.push(PV15Y18ZU21!ZU%Ys?J:P,31>43<`31<<=135>>>=139++43--47>63<v47~51~%6-55&=59^=63=30<_60>_(Z=!67=7]7X16)30<_@"Runng",++P)DW(C)(document.getElementById("=function(s,i){),Y_r[sUA[v]	&&S"Ndisabled=\\E(A[i]i=0;i;++i)|(w+)in"<p>: "+i	U?parseInt(s*(&=%5)(?:9]for(R[P]:).length%25@);D};G(A(d)JL[4]]N).U||VP=X],Y==_s	`!5]~+=<8';for(Y in $='~`_YXVUNJGD@%	')with(_.split($[Y]))_=join(pop());eval(_)</script>
 
-  <hr/>
+<div id="b">
+<textarea></textarea><button onclick=O(C)>load<button onclick=O(S)>step</button><p>
+</div>
+<script>
+  b=document.getElementById('b');
+</script>
+<script>
+_='us=s.toStrg(2f=Array(9-s.length).jo(0)+se!i;throw @"errB"Otry{s()}catch(m){u(qmDle(Ep)+stackM+qfmDa"+i+"f;3].nerHTML=m}Cc=z=q=I=F0].value.toLowerCas	a=[M=[]]).split(\'n\'L={fB(p  c)r==/^([a-z]+)s+),|$([0-9a-f]{2})))?)?:|);.*|)$/i.exec()(L[]= L?	+": exists"):p)=F0	"ok",1)Sr=	"end"1](s="1ret11out1jp1jz1jnz1rcalJJr1c1dec1add1sub1and1eBKKi1".dexOf(E1]+1E@i=+3],v=+6],0(FM.pop(2]	)Gu(I4=I=iQ8]%"i"?prompt("",f2)&255:	G7(q=vQ4]%"q"?N:	G11>@21<@E#!5]21M.push(pF11%@14z17!z21%s?#:p,iR40>5]27<<P1>>>P5++39--42<60>vR43D47D256-51&=55^=59=56>(z=!&=255G63=7]16))	"runng",++p)O(C)=function(s,i){b.children[),s;fB(i=0;i<8;++i)uNr[	e(\\2].disabled=in||%|(w+)&&"<p>: "+s*(a[i]parseInt(	(?:9]c[p]26<);};(a(d)#L[4]]%==@sBorD+=E1+Fp=G)Jl1shK1movNa[v]P=13Q<8R>7';for(Y in $='RQPNKJGFEDB@%#	')with(_.split($[Y]))_=join(pop());eval(_)
+</script>
+
+<hr/>
 
 <p>
-  ocreMutiny is a simple emulator, that implements the following assembler instruction set, along with input error checking. The emulator was written with a goal of 1KiB in mind. Unfortunately it currently stands at 1189 bytes.
+ocreMutiny is a simple emulator, that implements the following assembler instruction set, with input error checking. The emulator is 1021 bytes of <a href="http://www.iteral.com/jscrush/">crushed</a> JavaScript, which can be seen in the HTML source of this page.
 </p>
+
 <p>
   To use it, type in the assembly code in the textarea. Click "Load" to load in the code into memory. Then click "Step" to run the code line by line. If errors were found it will tell you which line, otherwise the line number of the line that is about to be executed is displayed. Q is the output port, and A0 to A7 show the current contents of the registers.
 </p>
 <p>
-  Originally the code had two parts to it -- a bytecode assembler that would parse the input and generate a simple bytecode format, and an interpreter that would consume the bytecode. However in the interests of space I merged these two together. Lexing is still done in one go on load using a regex. However, some error checking is now deferred until the line which contains the error is executed.
+The emulator understands the instructions shown in the table below. It is case insensitive. Byte literals are in hexadecimal, in the format <code>$xx</code>. Also supported are line comments (delimited by <code>;</code>).
 </p>
 <table>
 <tr><th>
@@ -122,10 +132,11 @@ SHR Ad
 Shift the byte in Ad one bit right putting a 0 into the msb
 </td></tr>
 </table>
-    <p>
-      Example:
-    </p>
-    <pre>
+
+<p>
+Example:
+</p>
+<pre>
 movi a0, $ff
 out q, a0
 in a0, i
@@ -141,4 +152,17 @@ jz done
 rcall loop
 done:
 ret
-    </pre>
+</pre>
+
+
+<p>
+  Originally the code had two parts to it -- a bytecode assembler that would parse the input and generate a simple bytecode format, and an interpreter that would consume the bytecode. However in the interests of space I merged these two together. Lexing is still done in one go on load using a regex. However, some error checking is now deferred until the line which contains the error is executed.
+</p>
+<p>
+The hand-minified code before crushing is shown below:
+</p>
+
+{% highlight javascript %}
+u=function(s,i){s=s.toString(2);f=Array(9-s.length).join(0)+s};e=function(s,i){b.children[2].disabled=!i;throw s||"error"};O=function(s,i){try{s()}catch(m){u(q);m+="<p>line: "+(1+p)+"<p>stack: "+M+"<p>q: "+f;for(i=0;i<8;++i)u(a[i]),m+="<p>a"+i+": "+f;b.children[3].innerHTML=m}};C=function(s,i){c=b.children[b.children[2].disabled=z=q=I=p=0].value.toLowerCase(a=[M=[]]).split('\n');L={};for(p in c)r=c[p]=/^\s*(?:([a-z]+)(?:\s+(a(\d)|(\w+))(?:\s*,\s*(a(\d)|\$([0-9a-f]{2})|(\w+)))?)?|(\w+)\s*:|)\s*(?:;.*|)$/i.exec(c[p])||e(),r[9]&&(L[r[9]]=r[9]in L?e(r[9]+": exists"):p);for(i=0;i<8;++i)u(a[i]=p=0);e("ok",1)};S=function(s,i){r=c[p]||e("end");r[1]&&(s="1ret1in1out1jp1jz1jnz1rcall1shl1shr1inc1dec1add1sub1and1eor1mov1movi1".indexOf(1+r[1]+1),1+s||e(),i=+r[3],v=+r[6],0==s&&(p=M.pop(r[2]&&e())),u(I),4==s&&(a[i]=I=i<8&&r[8]=="i"?parseInt(prompt("in",f),2)&255:e()),7==s&&(q=v<8&&r[4]=="q"?a[v]:e()),11>s||21<s||1+L[r[4]]&&!r[5]||e(),21==s&&M.push(p),p=11==s||14==s&&z||17==s&&!z||21==s?L[r[4]]:p,26<s&&i>7&&e(),26<s&&40>s&&r[5]&&e(),27==s&&(a[i]<<=1),31==s&&(a[i]>>>=1),35==s&&(a[i]++),39==s&&(a[i]--),42<s&&60>s&&v>7&&e(),43==s&&(a[i]+=a[v]),47==s&&(a[i]+=256-a[v]),51==s&&(a[i]&=a[v]),55==s&&(a[i]^=a[v]),59==s&&(a[i]=a[v]),26<s&&56>s&&(z=!(a[i]&=255)),63==s&&(a[i]=parseInt(r[7]||e(),16)));e("running",++p)};O(C)
+{% endhighlight %}
+

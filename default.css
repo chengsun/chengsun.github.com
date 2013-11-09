@@ -58,7 +58,9 @@ h4,h5,h6 {font-size: 100%;}
 }
 
 pre {
+    background: #fff;
     white-space: pre-wrap;
+    overflow: auto;
 }
 
 

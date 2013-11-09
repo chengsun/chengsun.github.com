@@ -6,7 +6,7 @@ title: Cheng Sun - Home
 # Blog
 
 {% for post in site.posts %}
-* {{ post.date | date: "%Y-%m-%d" }} &mdash; [{{ post.title}}]({{ post.url }})
+* {{ post.date | date: "%Y-%m-%d" }} &mdash; [{{ post.title }}]({{ post.url }})
 
 {% endfor %}
 
@@ -16,7 +16,7 @@ title: Cheng Sun - Home
     * [OCR AS Economics](economics.html) questions
     * [OCR AS Physics material vocab](physics.html) questions
 
-* [ocreMutiny](ocremutiny.html) -- a tiny (just over 1K) emulator for the OCR A2 Electronics assembly language
+* [ocreMutiny](ocremutiny.html) &mdash; a tiny 1K emulator for the OCR A2 Electronics assembly language
 
 * Verlet integration experiments
     * [Ribbon](verletribbon.html) in low gravity
