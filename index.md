@@ -6,7 +6,7 @@ title: Cheng Sun - Home
 # Blog
 
 {% for post in site.posts %}
-* {{ post.date | date: "%Y-%m-%d" }} &ndash; [{{ post.title}}]({{ post.url }})
+* {{ post.date | date: "%Y-%m-%d" }} &mdash; [{{ post.title}}]({{ post.url }})
 
 {% endfor %}
 
