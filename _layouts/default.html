@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html {
+        background: #CEF;
+        background-image: radial-gradient(center, #DEF 40%, #BEF 85%);
+        background-image: -moz-radial-gradient(center, #DEF 40%, #BEF 85%);
+        background-image: -webkit-radial-gradient(center, #DEF 40%, #BEF 85%);
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+      body {
+        background: rgba(255, 255, 255, 0.5);
+        width: 600px;
+        padding: 2em;
+        margin: 0 auto;
+        font-family: sans-serif;
+      }
+      .box {
+        border-top: 3px solid gray;
+      }
+      .box>ul>li {
+        padding-bottom: 1em;
+      }
+      .top {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="top">Cheng Sun</h1>
+    <a class="top" href="/">Home</a>
+
+    {{ content }}
+
+    <div class="box">
+      <p>Find me on <a href="https://github.com/chengsun">GitHub</a></p>
+    </div>
+  </body>
+</html>
+

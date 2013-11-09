@@ -1,95 +1,75 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      html {
-        background: #CEF;
-        background-image: radial-gradient(center, #DEF 40%, #BEF 85%);
-        background-image: -moz-radial-gradient(center, #DEF 40%, #BEF 85%);
-        background-image: -webkit-radial-gradient(center, #DEF 40%, #BEF 85%);
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-      }
-      body {
-        background: rgba(255, 255, 255, 0.5);
-        width: 600px;
-        padding: 2em;
-        margin: 0 auto;
-        font-family: sans-serif;
-      }
-      .box {
-        border-top: 3px solid gray;
-      }
-      .box>ul>li {
-        padding-bottom: 1em;
-      }
-      .top {
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <h1 class="top">Cheng Sun</h1>
-    <p class="top">dot github dot io</p>
-    <div class="box">
-      <h3>JavaScript Hackery</h3>
+---
+layout: default
+title: Cheng Sun - Home
+---
+
+<div class="box">
+  <h1>Blog</h1>
+  <ul>
+    {% for post in site.posts %}
+      <li>
+        {{ page.date | date: "%Y-%m-%d" }} &endash; <a href="{{ post.url }}">{{ post.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+<div class="box">
+  <h1>JavaScript Hackery</h1>
+  <ul>
+    <li>Revision question sets
       <ul>
-        <li>Revision question sets
-          <ul>
-            <li><a href="economics.html">OCR AS Economics</a> questions</li>
-            <li><a href="physics.html">OCR Physics material vocab</a> questions</li>
-          </ul>
-        </li>
-        <li><a href="ocremutiny.html">ocreMutiny</a> -- a tiny (just over 1K) emulator for the OCR A2 Electronics assembly language.
-            <br><a href="ocremuinsn.html">Instruction set and examples</a></li>
-        </li>
-        <li>Verlet integration experiments
-            <ul>
-              <li><a href="verletribbon.htm">Ribbon</a> in low gravity</li>
-              <li><a href="verlettri.html">Triangles</a></li>
-              <li><a href="verletrag.html">Ragdoll</a> game</li>
-              <li><a href="verletbridge.html">Bridge simulation</a> (unfinished)</li>
-            </ul>
-        </li>
-        <li>3D experiments with 2D canvas
-          <ul>
-            <li><a href="points.html">Morphing points</a></li>
-            <li><a href="cube.html">A rotating 3D cube</a></li>
-          </ul>
-        </li>
-        <li>Fractal experiments
-          <ul>
-            <li><a href="julia.html">Julia set</a>. Uses randomised backwards iteration. Rendered using 2D canvas.</li>
-            <li><a href="tinkerbell.html">Tinkerbell map</a>.</li>
-            <li><a href="walk.html">Langton's ant</a>. I used this to visualise <a href="http://projecteuler.net/problem=349">this PE problem</a>. There is a bug when the ant hits the edge of the simulation; instead the glider pattern is meant to continue forever.</li>
-          </ul>
-        </li>
-        <li><a href="mine.html">Minesweeper</a></li>
-        <li><a href="snake.html">Snake game in 1K</a></li>
+        <li><a href="economics.html">OCR AS Economics</a> questions</li>
+        <li><a href="physics.html">OCR Physics material vocab</a> questions</li>
       </ul>
-    </div>
-    <div class="box">
-      <h3>Things I do</h3>
+    </li>
+    <li><a href="ocremutiny.html">ocreMutiny</a> -- a tiny (just over 1K) emulator for the OCR A2 Electronics assembly language.
+        <br><a href="ocremuinsn.html">Instruction set and examples</a></li>
+    </li>
+    <li>Verlet integration experiments
+        <ul>
+          <li><a href="verletribbon.htm">Ribbon</a> in low gravity</li>
+          <li><a href="verlettri.html">Triangles</a></li>
+          <li><a href="verletrag.html">Ragdoll</a> game</li>
+          <li><a href="verletbridge.html">Bridge simulation</a> (unfinished)</li>
+        </ul>
+    </li>
+    <li>3D experiments with 2D canvas
       <ul>
-        <li>
-        I am part of <a href="http://systemetric.org/">Systemetric</a>, the Hills Road Sixth Form College robotics team. We build and code autonomous robots for the <a href="https://www.studentrobotics.org/">Student Robotics</a> competition. Find us on <a href="https://github.com/Systemetric/">GitHub</a>.
-        </li>
-        <li>
-          I worked on the <a href="https://github.com/chengsun/gtk-npapi-vlc">VLC Mozilla browser plugins</a> as part of <a href="http://google-opensource.blogspot.co.uk/2012/02/google-code-in-2011-grand-prize-winners.html">Google Code-In 2011</a>.
-        </li>
-        <li>
-          I developed the <a href="https://addons.mozilla.org/en-US/firefox/addon/spdy-indicator/">Mozilla SPDY indicator</a>, a Firefox addon that indicates when a web page was served through <a href="http://www.chromium.org/spdy">SPDY</a>.
-        </li>
-        <li>
-          I do competitive algorithmic coding, and was part of the <a href="http://olympiad.org.uk/2011/index.html">British team</a> in the <a href="http://www.ioi2011.or.th/">International Olympiad in Informatics 2011</a>.
-        </li>
+        <li><a href="points.html">Morphing points</a></li>
+        <li><a href="cube.html">A rotating 3D cube</a></li>
       </ul>
-    </div>
-    <div class="box">
-      <h3>Other stuff</h3>
-      <p>I am a user (and big fan) of <a href="https://www.archlinux.org/">Arch Linux</a>. Give it a try -- it's fun!</p>
-      <p>I sometimes play NetHack on <a href="http://alt.org/nethack/plr.php?player=infinigon">NAO</a>.</p>
-      <p><a href="http://projecteuler.net"><img src="http://projecteuler.net/profile/infinigon.png"></img></a></p>
-    </div>
-  </body>
-</html>
+    </li>
+    <li>Fractal experiments
+      <ul>
+        <li><a href="julia.html">Julia set</a>. Uses randomised backwards iteration. Rendered using 2D canvas.</li>
+        <li><a href="tinkerbell.html">Tinkerbell map</a>.</li>
+        <li><a href="walk.html">Langton's ant</a>. I used this to visualise <a href="http://projecteuler.net/problem=349">this PE problem</a>. There is a bug when the ant hits the edge of the simulation; instead the glider pattern is meant to continue forever.</li>
+      </ul>
+    </li>
+    <li><a href="mine.html">Minesweeper</a></li>
+    <li><a href="snake.html">Snake game in 1K</a></li>
+  </ul>
+</div>
+<div class="box">
+  <h1>Things I do</h1>
+  <ul>
+    <li>
+    I am part of <a href="http://systemetric.org/">Systemetric</a>, the Hills Road Sixth Form College robotics team. We build and code autonomous robots for the <a href="https://www.studentrobotics.org/">Student Robotics</a> competition. Find us on <a href="https://github.com/Systemetric/">GitHub</a>.
+    </li>
+    <li>
+      I worked on the <a href="https://github.com/chengsun/gtk-npapi-vlc">VLC Mozilla browser plugins</a> as part of <a href="http://google-opensource.blogspot.co.uk/2012/02/google-code-in-2011-grand-prize-winners.html">Google Code-In 2011</a>.
+    </li>
+    <li>
+      I developed the <a href="https://addons.mozilla.org/en-US/firefox/addon/spdy-indicator/">Mozilla SPDY indicator</a>, a Firefox addon that indicates when a web page was served through <a href="http://www.chromium.org/spdy">SPDY</a>.
+    </li>
+    <li>
+      I do competitive algorithmic coding, and was part of the <a href="http://olympiad.org.uk/2011/index.html">British team</a> in the <a href="http://www.ioi2011.or.th/">International Olympiad in Informatics 2011</a>.
+    </li>
+  </ul>
+</div>
+<div class="box">
+  <h1>Other stuff</h1>
+  <p>I am a user (and big fan) of <a href="https://www.archlinux.org/">Arch Linux</a>. Give it a try -- it's fun!</p>
+  <p>I sometimes play NetHack on <a href="http://alt.org/nethack/plr.php?player=infinigon">NAO</a>.</p>
+  <p><a href="http://projecteuler.net"><img src="http://projecteuler.net/profile/infinigon.png"></img></a></p>
+</div>
