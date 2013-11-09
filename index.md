@@ -51,6 +51,6 @@ title: Cheng Sun - Home
 
 I am a user (and big fan) of [Arch Linux](https://www.archlinux.org/). Give it a try -- it's fun!
 
-I sometimes play NetHack on <a href="http://alt.org/nethack/plr.php?player=infinigon">NAO</a>.
+I sometimes play NetHack on the [NAO server](http://alt.org/nethack/plr.php?player=infinigon).
 
 [![Project Euler](http://projecteuler.net/profile/infinigon.png)](http://projecteuler.net)
