@@ -43,7 +43,7 @@ title: Cheng Sun - Home
 
 * I worked on the [VLC Mozilla browser plugins](https://github.com/chengsun/gtk-npapi-vlc) as part of [Google Code-In 2011](http://google-opensource.blogspot.co.uk/2012/02/google-code-in-2011-grand-prize-winners.html).
 
-* I developed the [Mozilla SPDY indicator](https://addons.mozilla.org/en-US/firefox/addon/spdy-indicator/), a Firefox addon that indicates when a web page was served through [SPDY](http://www.chromium.org/spdy).
+* I developed the [Firefox SPDY indicator](https://addons.mozilla.org/en-US/firefox/addon/spdy-indicator/), a Firefox addon that indicates when a web page was served through [SPDY](http://www.chromium.org/spdy).
 
 * I do competitive algorithmic coding, and was part of the [British team](http://olympiad.org.uk/2011/index.html) in the [International Olympiad in Informatics 2011](http://www.ioi2011.or.th/).
 
