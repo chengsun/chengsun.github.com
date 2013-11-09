@@ -1,1 +1,144 @@
+---
+layout: post
+title: ocreMutiny -- a tiny OCR assembly language emulator
+style: |
+  table {
+      border-collapse: collapse;
+  }
+  table, th, td {
+      border: 1px solid black;
+      padding: 0.1em 1em;
+  }
+  tr:nth-child(even) {
+      background: #eee;
+  }
+  tr:nth-child(odd) {
+      background: #fff;
+  }
+---
+
 <textarea id=q></textarea><button onclick=W(C)>Load<button id=S onclick=W(S)>Step</button><p id=i><script>_='Bs=s.toStrg(2@return Array(9-sNjo(\'0\')+sDE!i;throw "Error"DWtry{s()}catch(e){z=e}z~Le(P+1)+StackM+QB(Qz~S"+i+"B(@i"NnerHTML=zDCR=q"Nvalue.toLowerCase(Nsplit(\'n\'@L={DV0;P<R;++P)r==/^([A-Z]+)s+G),G|$([0-9A-F]{2})))?)?:|)#.*|)$/i.exec()	(L[]= L?+": exists"):P@A=[XM=[XVZ=VQ=I==0;"OK",1)DSr=U"End"@1]	(s="1nop1ret11out1jp1jz1jnz1rcall1shl1shr1c1dec1mov1add1sub1and1eor1movi1".dexOf(1+1]+11+i=+3Xv=+6X5>_2]	4(VM.pop()8=I=8]Y"i"prompt("",B(I)2)&%511(Q=v	4]Y"q"?A[v]15>%<1+J	`%M.push(PV15Y18ZU21!ZU%Ys?J:P,31>43<`31<<=135>>>=139++43--47>63<v47~51~%6-55&=59^=63=30<_60>_(Z=!67=7]7X16)30<_@"Runng",++P)DW(C)(document.getElementById("=function(s,i){),Y_r[sUA[v]	&&S"Ndisabled=\\E(A[i]i=0;i;++i)|(w+)in"<p>: "+i	U?parseInt(s*(&=%5)(?:9]for(R[P]:).length%25@);D};G(A(d)JL[4]]N).U||VP=X],Y==_s	`!5]~+=<8';for(Y in $='~`_YXVUNJGD@%	')with(_.split($[Y]))_=join(pop());eval(_)</script>
+
+  <hr/>
+
+<p>
+  ocreMutiny is a simple emulator, that implements the following assembler instruction set, along with input error checking. The emulator was written with a goal of 1KiB in mind. Unfortunately it currently stands at 1189 bytes.
+</p>
+<p>
+  To use it, type in the assembly code in the textarea. Click "Load" to load in the code into memory. Then click "Step" to run the code line by line. If errors were found it will tell you which line, otherwise the line number of the line that is about to be executed is displayed. Q is the output port, and A0 to A7 show the current contents of the registers.
+</p>
+<p>
+  Originally the code had two parts to it -- a bytecode assembler that would parse the input and generate a simple bytecode format, and an interpreter that would consume the bytecode. However in the interests of space I merged these two together. Lexing is still done in one go on load using a regex. However, some error checking is now deferred until the line which contains the error is executed.
+</p>
+<table>
+<tr><th>
+Assembler
+</th><th>
+Function
+</th></tr>
+<tr><td>
+MOVI Ad, n
+</td><td>
+Copy the byte n into register Ad
+</td></tr>
+<tr><td>
+MOV Ad, As
+</td><td>
+Copy the byte from As to Ad
+</td></tr>
+<tr><td>
+ADD Ad, As
+</td><td>
+Add the byte in As to the byte in Ad and store the result in Ad
+</td></tr>
+<tr><td>
+SUB Ad, As
+</td><td>
+Subtract the byte in As from the byte in Ad and store the result in Ad
+</td></tr>
+<tr><td>
+AND Ad, As
+</td><td>
+Logical AND the byte in As with the byte in Ad and store the result in Ad
+</td></tr>
+<tr><td>
+EOR Ad, As
+</td><td>
+Logical EOR the byte in As with the byte in Ad and store the result in Ad
+</td></tr>
+<tr><td>
+INC Ad
+</td><td>
+Add 1 to Ad
+</td></tr>
+<tr><td>
+DEC Ad
+</td><td>
+Subtract 1 from Ad
+</td></tr>
+<tr><td>
+IN Ad, I
+</td><td>
+Copy the byte at the input port into Ad
+</td></tr>
+<tr><td>
+OUT Q, As
+</td><td>
+Copy the byte in As to the output port
+</td></tr>
+<tr><td>
+JP e
+</td><td>
+Jump to label e
+</td></tr>
+<tr><td>
+JZ e
+</td><td>
+Jump to label e if the result of the last ADD, SUB, AND, EOR, INC, DEC, SHL or SHR was zero
+</td></tr>
+<tr><td>
+JNZ e
+</td><td>
+Jump to label e if the result of the last ADD, SUB, AND, EOR, INC, DEC SHL or SHR was not zero
+</td></tr>
+<tr><td>
+RCALL s
+</td><td>
+Push the program counter onto the stack to store the return address and then jump to label s
+</td></tr>
+<tr><td>
+RET
+</td><td>
+Pop the program counter from the stack to return to the place the subroutine was called from
+</td></tr>
+<tr><td>
+SHL Ad
+</td><td>
+Shift the byte in Ad one bit left putting a 0 into the lsb
+</td></tr>
+<tr><td>
+SHR Ad
+</td><td>
+Shift the byte in Ad one bit right putting a 0 into the msb
+</td></tr>
+</table>
+    <p>
+      Example:
+    </p>
+    <pre>
+movi a0, $ff
+out q, a0
+in a0, i
+rcall loop
+
+end:
+out q, a0
+jp end
+
+loop:
+dec a0
+jz done
+rcall loop
+done:
+ret
+    </pre>

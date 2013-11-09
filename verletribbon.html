@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Triangles
+title: Ribbon
 ---
 
 <!-- http://gamedev.tutsplus.com/tutorials/implementation/simulate-fabric-and-ragdolls-with-simple-verlet-integration/ -->
@@ -38,24 +38,24 @@ Point.prototype = {
 var tick = 0;
 
 var prevPoints = [], points = [], links = [];
-for (var i = 0; i < 10; ++i) {
+for (var i = 0; i < 100; ++i) {
   var a = [Math.random() * 2*Math.PI, Math.random() * 2*Math.PI];
   points.push(new Point(Math.cos(a[0]), Math.cos(a[1])));
   prevPoints.push(new Point(Math.cos(a[0]), Math.cos(a[1])));
   //if (i != 0) links.push([0,i,0.6]);
-  if (i != 0) links.push([i-1,i,0.6]);
-  if (i > 1) links.push([i-2,i,0.6]);
+  if (i != 0) links.push([i-1,i,0.01]);
+  //if (i > 1) links.push([i-2,i,0.6]);
 }
 
-ctx.lineWidth = 0.01;
+ctx.lineWidth = 0.05;
 
 setInterval(function () {
-    ctx.fillStyle = 'rgba(255,255,255, 0.9)';
+    ctx.fillStyle = 'rgba(255,255,255, 0.5)';
     ctx.fillRect(-2,-2,4,4);
 
     for (var constraintI = 0; constraintI < 4; ++constraintI) {
       points[0].x = Math.sin(tick*0.3)*0.5*Math.cos(tick*0.07);
-      points[0].y = Math.cos(tick*0.2)*0.5*Math.cos(tick*0.09);
+      points[0].y = Math.cos(tick*0.2)*0.5*Math.cos(tick*0.09)-1;
       for (var i = 0; i < links.length; ++i) {
         var link = links[i];
         var dir = points[link[1]].sub(points[link[0]]);
@@ -68,13 +68,13 @@ setInterval(function () {
     }
     // verlet
     for (var i = 0; i < points.length; ++i) {
-      var newPoint = points[i].mul(2).sub(prevPoints[i])/*.add(new Point(0,0.01))*/;
+      var newPoint = points[i].mul(2).sub(prevPoints[i]).add(new Point(0,0.001));
       prevPoints[i] = points[i];
       points[i] = newPoint;
     }
 
     for (var i = 0; i < points.length; ++i) {
-        ctx.fillStyle = 'hsla(' + (i/points.length*360) + ', 100%, 50%, 0.7)';
+        ctx.fillStyle = 'hsla(' + (i/points.length*360) + ', 100%, 50%, 0.3)';
         ctx.beginPath();
         ctx.arc(points[i].x, points[i].y, 0.05, 0, 2*Math.PI, true);
         ctx.fill();

@@ -1,19 +1,28 @@
-<html>
-<head>
-<style type="text/css">
-button {
-	width: 3em;
-	height: 3em;
-}
-</style>
-</head>
-<body id="b">
+---
+layout: post
+title: Minesweeper
+style: |
+  body {
+    width: 50em !important;
+  }
+  #b {
+    display: inline-block;
+  }
+  #container {
+    text-align: center;
+  }
+  button {
+    width: 3em;
+    height: 3em;
+  }
+---
+<div id="container"><div id="b"></div></div>
 <script type="text/javascript">
 
 var colours = ["grey", "blue", "green", "red", "navy", "maroon", "teal", "purple", "black"];
 var playing = true;
 
-var body = document.getElementById('b');
+var b = document.getElementById("b");
 var w = 20, h = 20, m = 50;
 var v = [], o = [], bs = [];
 var nopened = 0;
@@ -150,5 +159,3 @@ function open(x, y) {
 	}
 }
 </script>
-</body>
-</html>
