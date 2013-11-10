@@ -3,11 +3,11 @@ layout: blogpost
 title: "Spaced out part 1: deciphering dynamic programming"
 ---
 
-This is my second year participating in the [National Cipher Challenge](http://www.cipher.maths.soton.ac.uk/), a competition to crack encoded texts. The challenges get harder over time, and one of the ways that this is achieved is that proper spacing is removed, leaving only a long stream of characters with no indication of where words start and stop. I've developed a useful algorithm that tries to insert spaces in decoded text, which makes our tasks of reviewing it far easier. I suspect that it could also form part of an automated substitution cipher decoding system, but first let's see the algorithm itself.
+This is the second year that I have been part of a team in the [National Cipher Challenge](http://www.cipher.maths.soton.ac.uk/), a competition based on cracking encoded texts. The challenges get harder over time, and one of the ways that this is achieved is that proper spacing is removed, leaving only a long stream of characters with no indication of where words start and stop. I've developed a useful algorithm that tries to insert spaces in decoded text, which makes our tasks of reviewing it far easier. I suspect that it could also form part of an automated substitution cipher decoding system, but first let's see the algorithm itself.
 
-The principle is simple enough. Let's say that I have a string, "`ateststring`", that I want to split into individual words to stick spaces between, and that I want to end up with words that are all commonly used in a typical English text. I could stick a space after the first `a`, giving me "`a teststring`". Alternatively if I put it after `at`, I get "`at eststring`". I could even reasonably end up with "`ate ststring`". However, the problem with the last two spacings is that it isn't possible to split the rest of the string sensibly. This makes it clear that splitting after the `a` is the best.
+The principle is simple enough. Let's say that I have a string, "`ateststring`", that I want to split into individual words to put spaces between. I could stick a space after the first `a`, giving me "`a teststring`". Alternatively if I put it after `at`, I get "`at eststring`". I could even reasonably end up with "`ate ststring`". However, the problem with the last two spacings is that it isn't possible to split the rest of the string sensibly. This makes it clear that splitting after the `a` is the best.
 
-How do we formalise the concept of a "commonly used word"? We can define a "badness" score to a word, which gives an indication of how rarely that word comes up in typical English text -- higher is rarer. Then, the objective of the algorithm is to split up the string into words which give the lowest badness score when summed. Let's call our algorithm `split`, taking a parameter `s`, the string to split, and outputs this lowest. We want to take a single word off the front of the unspaced string, find the badness of that word, and then check the best way to split the rest of that string. There are many ways of taking a word off the front, so let's try them all. Notice that we can define split in terms of itself (Pythonesque pseudocode):
+Obviously, in order to end up with a sensible sentence, we want to have words that are commonly used in a typical English text. We can define a "badness" score to a word, which gives an indication of how rarely that word comes up in typical English text -- lower is better. Then, the objective of the algorithm is to split up the string into words which give the lowest badness score when summed. Let's call our algorithm `split`, taking a parameter `s`, the string to split, and outputs this lowest. We want to take a single word off the front of the unspaced string, find the badness of that word, and then check the best way to split the rest of that string. There are many ways of taking a word off the front, so let's try them all. Notice that we can define split in terms of itself (Pythonesque pseudocode):
 
 ```python
 def split(s):                                       # "ateststring"
@@ -26,18 +26,26 @@ Clearly, `bestSplit` only tells you the score of the best spacing, not the posit
 Let's see this all in Pythonesque pseudocode:
 
 ```python
+s = "ateststring"
+
 # start with an infinitely bad score
 bestSplit = [infinity] * length of string
 prevSplit = [None] * length of string
 
 bestSplit[0] = 0
 
-for i = 0 to length of string:
+for i = 0 to length of s:
     for l = 1 to maximum length of word:
         newScore = bestSplit[i] + badness(s[i:i+l])
         if bestSplit[i+l] > newScore:
             bestSplit[i+l] = newScore
             prevSplit[i+l] = i
+
+# finally, put spaces into s
+i = length of s
+while i != None:
+    s.insert(i, ' ')
+    i = prevSplit[i]
 ```
 
 In the next part of this series, I will be exploring the badness function, the trie, and further applications of this algorithm beyond the obvious.
