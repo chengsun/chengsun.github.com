@@ -3,6 +3,8 @@ layout: default
 title: Cheng Sun - Home
 ---
 
+I am a 17-year-old student, currently based in Cambridge, UK.
+
 # Blog
 
 {% for post in site.posts %}
