@@ -31,5 +31,6 @@ Things that don't work yet:
 
 * Persistent state between sessions (no history, no saved custom definitions)
 * Fetching currency exchange rates from the internet
+* Graph plotting
 * Help
 * Possibly other stuff? (file a bug report in the GitHub repos linked above please!)
