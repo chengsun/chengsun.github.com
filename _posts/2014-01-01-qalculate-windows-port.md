@@ -18,7 +18,7 @@ Happy new year! I have a late Christmas gift to share with you...
 And now it's the best calculator software for Windows too! I've been working on porting it, and have finally got something that runs pretty decently.
 
 <div style="text-align: center; font-size: 200%;">
-<a href="/dump/qalculate-win32-140101.zip">
+<a href="https://github.com/chengsun/qalculate-gtk/releases/download/win32-140101/qalculate-win32-140101.zip">
 Get it here!</a>
 </div>
 <p style="font-size: 75%; text-align: center;">(32-bit, requires Windows XP or above)</p>
