@@ -32,8 +32,9 @@ I am a 17-year-old student, currently based in Cambridge, UK.
 
 * Fractals and automata
     * [Animated Julia set](julia.html). Uses randomised backwards iteration
-    * [Tinkerbell map](tinkerbell.html)
+    * [Tinkerbell map](tinkerbell.html). Beautiful order from chaos.
     * [Langton's ant](walk.html) I used this to visualise [a PE problem](http://projecteuler.net/problem=349). There is a bug when the ant hits the edge of the simulation; the glider pattern is meant to continue forever.
+    * [Linear congruential generator](lcg.html) (LCG) patterns. Swirls and shapes emerging out of randomness.
 
 * [Minesweeper](mine.html)
 
