@@ -50,6 +50,8 @@ I am a 17-year-old student, currently based in Cambridge, UK.
 
 * I do competitive algorithmic coding, and was part of the [British team](http://olympiad.org.uk/2011/index.html) in the [International Olympiad in Informatics 2011](http://www.ioi2011.or.th/).
 
+* I enjoy taking photos. [Check them out!](http://www.flickr.com/photos/118277575@N06/)
+
 # Other stuff
 
 I am a user (and big fan) of [Arch Linux](https://www.archlinux.org/). Give it a try -- it's fun!
