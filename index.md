@@ -44,7 +44,7 @@ Most of this is very old stuff that I made back in secondary school and sixth fo
 
 # Things I do
 
-* I am part of [Systemetric](http://systemetric.org/), the Hills Road Sixth Form College robotics team. We build and code autonomous robots for the [Student Robotics](https://www.studentrobotics.org/) competition. Find us on [GitHub](https://github.com/Systemetric).
+* I was part of [Systemetric](http://systemetric.org/), the Hills Road Sixth Form College robotics team. We build and code autonomous robots for the [Student Robotics](https://www.studentrobotics.org/) competition. Find us on [GitHub](https://github.com/Systemetric).
 
 * I worked on the [VLC Mozilla browser plugins](https://github.com/chengsun/gtk-npapi-vlc) as part of [Google Code-In 2011](http://google-opensource.blogspot.co.uk/2012/02/google-code-in-2011-grand-prize-winners.html), of which I won the grand prize.
 
