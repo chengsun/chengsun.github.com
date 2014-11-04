@@ -3,7 +3,7 @@ layout: default
 title: Cheng Sun - Home
 ---
 
-I am an 18-year-old student, currently based in Cambridge, UK.
+I am an 18-year-old student, currently studying Computer Science with Maths at Cambridge University.
 
 # Blog
 
@@ -13,6 +13,8 @@ I am an 18-year-old student, currently based in Cambridge, UK.
 {% endfor %}
 
 # JavaScript Hackery
+
+Most of this is very old stuff that I made back in secondary school and sixth form in my free time.
 
 * Revision question sets
     * [OCR AS Economics](economics.html) questions
@@ -44,18 +46,14 @@ I am an 18-year-old student, currently based in Cambridge, UK.
 
 * I am part of [Systemetric](http://systemetric.org/), the Hills Road Sixth Form College robotics team. We build and code autonomous robots for the [Student Robotics](https://www.studentrobotics.org/) competition. Find us on [GitHub](https://github.com/Systemetric).
 
-* I worked on the [VLC Mozilla browser plugins](https://github.com/chengsun/gtk-npapi-vlc) as part of [Google Code-In 2011](http://google-opensource.blogspot.co.uk/2012/02/google-code-in-2011-grand-prize-winners.html).
+* I worked on the [VLC Mozilla browser plugins](https://github.com/chengsun/gtk-npapi-vlc) as part of [Google Code-In 2011](http://google-opensource.blogspot.co.uk/2012/02/google-code-in-2011-grand-prize-winners.html), of which I won the grand prize.
 
 * I developed the [Firefox SPDY indicator](https://addons.mozilla.org/en-US/firefox/addon/spdy-indicator/), a Firefox addon that indicates when a web page was served through [SPDY](http://www.chromium.org/spdy).
 
-* I do competitive algorithmic coding, and was part of the [British team](http://olympiad.org.uk/2011/index.html) in the [International Olympiad in Informatics 2011](http://www.ioi2011.or.th/).
+* I do competitive algorithmic coding, and was part of the [British team](http://olympiad.org.uk/2011/index.html) in the [International Olympiad in Informatics 2011](http://www.ioi2011.or.th/) and [2014](http://www.ioi2014.org/).
 
 * I enjoy taking photos. [Check them out!](http://www.flickr.com/photos/118277575@N06/)
 
-# Other stuff
-
-I am a user (and big fan) of [Arch Linux](https://www.archlinux.org/). Give it a try -- it's fun!
-
-I sometimes play NetHack on the [NAO server](http://alt.org/nethack/plr.php?player=infinigon).
+* I am a user (and big fan) of [Arch Linux](https://www.archlinux.org/).
 
 [![Project Euler](http://projecteuler.net/profile/infinigon.png)](http://projecteuler.net)
