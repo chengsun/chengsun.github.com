@@ -1,10 +1,5 @@
 html {
-    background: #CEF;
-    background-image: radial-gradient(center, #DEF 40%, #BEF 85%);
-    background-image: -moz-radial-gradient(center, #DEF 40%, #BEF 85%);
-    background-image: -webkit-radial-gradient(center, #DEF 40%, #BEF 85%);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background: #eee;
 }
 body {
     background: rgba(255, 255, 255, 0.5);
@@ -13,6 +8,12 @@ body {
     margin: 2em auto;
     box-shadow: 0px 0px 30px #888;
     font-family: sans-serif;
+    background: #CEF;
+    background-image: radial-gradient(center, #e6f7ff 40%, #BEF 85%);
+    background-image: -moz-radial-gradient(center, #e6f7ff 40%, #BEF 85%);
+    background-image: -webkit-radial-gradient(center, #e6f7ff 40%, #BEF 85%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 .content, .footer {
     border-top: 3px solid gray;
