@@ -49,6 +49,10 @@ h4,h5,h6 {font-size: 100%;}
     margin-top: 0;
 }
 
+.footnotes {
+    font-size: 80%;
+}
+
 .floatl {
     float: left;
     margin-right: 1em;
