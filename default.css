@@ -1,18 +1,14 @@
 html {
     background: #eee;
 }
-body {
-    width: 40em;
+.page {
+    max-width: 40em;
     padding: 2em;
     margin: 2em auto;
+    line-height: 1.5;
     box-shadow: 0px 0px 30px #888;
     font-family: sans-serif;
     background: #CEF;
-    background-image: radial-gradient(center, #e6f7ff 40%, #BEF 85%);
-    background-image: -moz-radial-gradient(center, #e6f7ff 40%, #BEF 85%);
-    background-image: -webkit-radial-gradient(center, #e6f7ff 40%, #BEF 85%);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
 }
 .content, .footer {
     border-top: 3px solid gray;
