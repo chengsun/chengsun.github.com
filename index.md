@@ -3,7 +3,7 @@ layout: default
 title: Cheng Sun - Home
 ---
 
-I am an 18-year-old student, currently studying Computer Science with Maths at Churchill College, University of Cambridge.
+I am a 19-year-old student, currently studying Computer Science with Maths at Churchill College, University of Cambridge.
 
 # Blog
 
