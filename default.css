@@ -1,5 +1,5 @@
 html {
-    background: #eee;
+    background: #F1F1F1;
 }
 .page {
     max-width: 40em;
@@ -8,21 +8,26 @@ html {
     line-height: 1.5;
     box-shadow: 0px 0px 30px #888;
     font-family: sans-serif;
-    background: #CEF;
+    background: #D8F3FF;
 }
 .content, .footer {
     border-top: 3px solid gray;
+}
+.content {
     padding: 1em 0;
+}
+.footer {
+    padding-bottom: 2em;
 }
 .content>*>ul>li {
     padding-bottom: 1em;
 }
 a {
-    color: #a00;
+    color: #B00000;
     text-decoration: none;
 }
 a:hover {
-    color: #c00;
+    color: #FF0000;
     text-decoration: underline;
 }
 .top {
@@ -40,7 +45,7 @@ h3 {font-size: 110%;}
 h4,h5,h6 {font-size: 100%;}
 
 .subtitle {
-    color: #888;
+    color: #7F7F7F;
     font-size: 80%;
     margin-top: 0;
 }
