@@ -56,4 +56,4 @@ Most of this is very old stuff that I made back in secondary school and sixth fo
 
 * I am a user (and big fan) of [Arch Linux](https://www.archlinux.org/).
 
-[![Project Euler](http://projecteuler.net/profile/infinigon.png)](http://projecteuler.net)
+[![Project Euler](https://projecteuler.net/profile/infinigon.png)](https://projecteuler.net)
