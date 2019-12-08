@@ -81,8 +81,8 @@ For simplicity we will set the torus such that the red circle lies in the \\(x\\
 Given a point \\(\mathbf{x}\\), we want to determine the minimum distance \\(f(\mathbf{x})\\) to the surface of the torus.  The general idea is to determine the center \\(\mathbf{c}\\) of the green circle by projecting the point \\(\mathbf{x}\\) into the \\(x\\)-\\(y\\) plane, and then rescaling to the radius \\(R\\), as follows (taking \\(\hat{\mathbf{k}}\\) to be the unit vector along the \\(z\\)-axis):
 <p markdown="0">
 \begin{align}
-\mathbf{x}\_{xy} &= \mathbf{x} - \bigl(\mathbf{x}\cdot\hat{\mathbf{k}}\bigr)\mathbf{x} \\
-\mathbf{c} &= \frac{R}{\left| \mathbf{x}\_{xy} \right|} \mathbf{x}\_{xy} \\
+\mathbf{x}_{xy} &= \mathbf{x} - \bigl(\mathbf{x}\cdot\hat{\mathbf{k}}\bigr)\mathbf{x} \\
+\mathbf{c} &= \frac{R}{\left| \mathbf{x}_{xy} \right|} \mathbf{x}_{xy} \\
 \end{align}
 </p>
 Then, the vector from the center \\(\mathbf{c}\\) to our point \\(\mathbf{x}\\) intersects the torus, giving the shortest distance as:
@@ -105,8 +105,8 @@ Referring back to the 3D torus diagram above, this shows that the \\(u\\) axis c
 
 <p markdown="0">
 \begin{align}
-u &= \text{atan2}(\mathbf{c}\_y, \mathbf{c}\_x) \\
-v &= \text{atan2}(\hat{\mathbf{n}}\_z, \frac{\mathbf{c}}{R} \cdot \hat{\mathbf{n}}) \\
+u &= \text{atan2}(\mathbf{c}_y, \mathbf{c}_x) \\
+v &= \text{atan2}(\hat{\mathbf{n}}_z, \frac{\mathbf{c}}{R} \cdot \hat{\mathbf{n}}) \\
 \end{align}
 </p>
 
@@ -167,7 +167,7 @@ If you found this post interesting, check out [ShaderToy](https://www.shadertoy.
     The view direction is determined by which pixel \\((s\_x, s\_y)\\) on the screen is being processed:
     <p markdown="0">
     \begin{align}
-    \mathbf{v} &= \left( \frac{2 s\_x}{w} - 1, \frac{2 s\_y}{h} - 1, v\_z \right) \\
+    \mathbf{v} &= \left( \frac{2 s_x}{w} - 1, \frac{2 s_y}{h} - 1, v_z \right) \\
     \hat{\mathbf{v}} &= \frac{\mathbf{v}}{|\mathbf{v}|}
     \end{align}
     </p>
