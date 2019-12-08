@@ -24,7 +24,7 @@ Assuming we have this function already, we want to use it to solve the problem o
 
 Starting at a point \\(\mathbf{x}\_0\\) and moving along some unit direction vector \\(\hat{\mathbf{v}}\\), the distance function guarantees that it is safe to travel a distance of at least \\(f(\mathbf{x}\_0)\\) without fear of crossing the surface. Doing so we reach a new point \\(\mathbf{x}\_1 = \mathbf{x}\_0 + f(\mathbf{x}\_0) \hat{\mathbf{v}}\\). The *raymarching algorithm* simply does this in a loop: it checks whether a ray intersects our object by repeatedly moving a safe distance along the ray until it either converges on the object surface, or escapes to infinity.[^sdf]
 
-<img src="/drawing-doughnuts-raymarch.png"
+<img src="/drawing-doughnuts-march.svg"
      title="Raymarching example"
      alt="Raymarching example"
      style="width: 100%;"/>
@@ -67,7 +67,7 @@ Constructing a distance function
 
 A torus can be constructed with two circles, as shown below. The green circle with radius \\(r\\) is revolved so that its center travels along the path of the red circle with radius \\(R\\).
 
-<img src="/drawing-doughnuts-torus.png"
+<img src="/drawing-doughnuts-torus.svg"
      title="Calculating the minimum distance to a torus"
      alt="Torus diagram"
      style="width: 100%;"/>
@@ -75,10 +75,12 @@ A torus can be constructed with two circles, as shown below. The green circle wi
 For simplicity we will set the torus such that the red circle lies in the \\(x\\)-\\(y\\) plane, with its center in the origin.
 
 Given a point \\(\mathbf{x}\\), we want to determine the minimum distance \\(f(\mathbf{x})\\) to the surface of the torus.  The general idea is to determine the center \\(\mathbf{c}\\) of the green circle by projecting the point \\(\mathbf{x}\\) into the \\(x\\)-\\(y\\) plane, and then rescaling to the radius \\(R\\), as follows (taking \\(\hat{\mathbf{k}}\\) to be the unit vector along the \\(z\\)-axis):
+<p markdown="0">
 \begin{align}
-\mathbf{x}\_{xy} &= \mathbf{x} - \bigl(\mathbf{x}\cdot\hat{\mathbf{k}}\bigr)\mathbf{x} \\\\
-\mathbf{c} &= \frac{R}{\left| \mathbf{x}\_{xy} \right|} \mathbf{x}\_{xy}
+\mathbf{x}\_{xy} &= \mathbf{x} - \bigl(\mathbf{x}\cdot\hat{\mathbf{k}}\bigr)\mathbf{x} \\
+\mathbf{c} &= \frac{R}{\left| \mathbf{x}\_{xy} \right|} \mathbf{x}\_{xy} \\
 \end{align}
+</p>
 Then, the vector from the center \\(\mathbf{c}\\) to our point \\(\mathbf{x}\\) intersects the torus, giving the shortest distance as:
 \\[f(\mathbf{x}) = \left| \mathbf{x} - \mathbf{c} \right| - r\\]
 
@@ -97,10 +99,12 @@ Imagine cutting through one circular cross section of the hollow torus. Think of
 
 Referring back to the 3D torus diagram above, this shows that the \\(u\\) axis corresponds to the angle that the red line makes with its "resting position" (say, the \\(x\\) axis), and the \\(v\\) axis corresponds to the angle that the green line makes with its "resting position" (say, the direction of the red line). Then, we have a simple way of calculating the \\(uv\\) coordinates from \\(x,y,z\\):
 
+<p markdown="0">
 \begin{align}
-u &= \text{atan2}(\mathbf{c}\_y, \mathbf{c}\_x) \\\\
+u &= \text{atan2}(\mathbf{c}\_y, \mathbf{c}\_x) \\
 v &= \text{atan2}(\hat{\mathbf{n}}\_z, \frac{\mathbf{c}}{R} \cdot \hat{\mathbf{n}}) \\
 \end{align}
+</p>
 
 NB:
 
@@ -157,9 +161,11 @@ If you found this post interesting, check out [ShaderToy](https://www.shadertoy.
 
 [^viewdir]:
     The view direction is determined by which pixel \\((s\_x, s\_y)\\) on the screen is being processed:
+    <p markdown="0">
     \begin{align}
-    \mathbf{v} &= \left( \frac{2 s\_x}{w} - 1, \frac{2 s\_y}{h} - 1, v\_z \right) \\\\
+    \mathbf{v} &= \left( \frac{2 s\_x}{w} - 1, \frac{2 s\_y}{h} - 1, v\_z \right) \\
     \hat{\mathbf{v}} &= \frac{\mathbf{v}}{|\mathbf{v}|}
     \end{align}
+    </p>
     where the \\(v\_z\\) component is the distance that the camera's sensor is in front of the focal point, and \\(w\\), \\(h\\) are the dimensions of the screen in pixels.
 
