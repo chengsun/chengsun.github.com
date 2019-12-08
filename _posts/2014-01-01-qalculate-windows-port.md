@@ -3,6 +3,11 @@ layout: blogpost
 title: "New year, new platform: I ported Qalculate to Windows"
 ---
 
+Update: my patches have been merged upstream. Get the Windows build [from the
+qalculate downloads page](https://qalculate.github.io/downloads.html) directly.
+
+<details><summary>Archived post for posterity</summary><div markdown="block">
+
 Happy new year! I have a late Christmas gift to share with you...
 
 [Qalculate](http://qalculate.sourceforge.net) is without doubt the best free calculator software for Linux. It has everything:
@@ -34,3 +39,5 @@ Things that don't work yet:
 * Graph plotting
 * Help
 * Possibly other stuff? (file a bug report in the GitHub repos linked above please!)
+
+</div></details>
