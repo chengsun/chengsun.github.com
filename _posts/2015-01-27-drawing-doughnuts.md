@@ -5,13 +5,9 @@ title: "Drawing doughnuts: adventures in the third dimension"
 ---
 
 
-<div style="display: inline-block; text-align: center; float: right; padding: 1em;">
-<a href="http://www.cl.cam.ac.uk/teaching/1415/ProgJava/3star/tick3star-cs799.gif">
-<img src="http://www.cl.cam.ac.uk/teaching/1415/ProgJava/3star/tick3star-cs799-thumb.gif"
-     alt="Animated game of life on a torus" title="Click for full size (16MB)"
-     />
-     <br/>Click for full size<br/>(16MB)</a>
-</div>
+<video autoplay loop width="250" style="float: right; padding: 1em;" src="/drawing-doughnuts.webm" type="video/webm">
+Animated game of life on a torus. Sorry, your browser doesn't support embedded videos.
+</video>
 
 The algorithm that produced the animation to the right was written in less than 100 lines of Java code, using a simple technique called *raymarching*. The aim of this blog post is to convince you that, with the right tricks, it's easy to draw 3D objects convincingly.
 
