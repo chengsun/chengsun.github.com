@@ -18,6 +18,11 @@
       src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
     </script>
     {% endif %}
+    {% if page.lazyload %}
+    <script type="text/javascript"
+      src="//cdn.jsdelivr.net/npm/vanilla-lazyload@12.4.0/dist/lazyload.min.js">
+    </script>
+    {% endif %}
     {% if page.style %}
      <style type="text/css">
          {{ page.style }}
@@ -37,6 +42,14 @@
         <p class="floatr">Find me on <a href="https://github.com/chengsun">GitHub</a></p>
       </div>
     </div>
+
+    {% if page.lazyload %}
+    <script type="text/javascript">
+      var lazyLoadInstance = new LazyLoad({
+        elements_selector: ".lazy"
+      });
+    </script>
+    {% endif %}
   </body>
 </html>
 
