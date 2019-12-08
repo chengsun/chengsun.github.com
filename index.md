@@ -26,7 +26,7 @@ Most of this is very old stuff that I made back in secondary school and sixth fo
     * [Ribbon](verletribbon.html) in low gravity
     * [Triangles](verlettri.html)
     * [Interactive ragdoll game](verletrag.html)
-    * [Interactive bridge simulation](verletbridge.html) (unfinished)
+    * [Interactive bridge simulation](verletbridge.html)
 
 * 3D experiments with 2D canvas
     * [Morphing points](points.html)
