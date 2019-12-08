@@ -1,7 +1,7 @@
 ---
 layout: blogpost
-mathjax: yes
 title: "Drawing doughnuts: adventures in the third dimension"
+mathjax: yes
 ---
 
 
