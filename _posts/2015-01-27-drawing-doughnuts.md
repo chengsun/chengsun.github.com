@@ -5,7 +5,11 @@ mathjax: yes
 ---
 
 
-<video autoplay loop width="250" style="float: right; padding: 1em;" src="/assets/images/drawing-doughnuts.webm" type="video/webm">
+<video autoplay 
+       loop 
+       style="float: right; padding: 0.5em; width: 10em; max-width: 50%;" 
+       src="/assets/images/drawing-doughnuts.webm" 
+       type="video/webm">
 Animated game of life on a torus. Sorry, your browser doesn't support embedded videos.
 </video>
 
