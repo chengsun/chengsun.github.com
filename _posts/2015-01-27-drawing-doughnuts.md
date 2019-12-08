@@ -5,7 +5,7 @@ mathjax: yes
 ---
 
 
-<video autoplay loop width="250" style="float: right; padding: 1em;" src="/drawing-doughnuts.webm" type="video/webm">
+<video autoplay loop width="250" style="float: right; padding: 1em;" src="/assets/images/drawing-doughnuts.webm" type="video/webm">
 Animated game of life on a torus. Sorry, your browser doesn't support embedded videos.
 </video>
 
@@ -24,7 +24,7 @@ Assuming we have this function already, we want to use it to solve the problem o
 
 Starting at a point \\(\mathbf{x}\_0\\) and moving along some unit direction vector \\(\hat{\mathbf{v}}\\), the distance function guarantees that it is safe to travel a distance of at least \\(f(\mathbf{x}\_0)\\) without fear of crossing the surface. Doing so we reach a new point \\(\mathbf{x}\_1 = \mathbf{x}\_0 + f(\mathbf{x}\_0) \hat{\mathbf{v}}\\). The *raymarching algorithm* simply does this in a loop: it checks whether a ray intersects our object by repeatedly moving a safe distance along the ray until it either converges on the object surface, or escapes to infinity.[^sdf]
 
-<img src="/drawing-doughnuts-march.svg"
+<img src="/assets/images/drawing-doughnuts-march.svg"
      title="Raymarching example"
      alt="Raymarching example"
      style="width: 100%;"/>
@@ -67,7 +67,7 @@ Constructing a distance function
 
 A torus can be constructed with two circles, as shown below. The green circle with radius \\(r\\) is revolved so that its center travels along the path of the red circle with radius \\(R\\).
 
-<img src="/drawing-doughnuts-torus.svg"
+<img src="/assets/images/drawing-doughnuts-torus.svg"
      title="Calculating the minimum distance to a torus"
      alt="Torus diagram"
      style="width: 100%;"/>
