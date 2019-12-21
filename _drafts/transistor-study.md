@@ -20,35 +20,29 @@ style: |
 My LED flasher in action. Sorry, your browser doesn't support embedded videos.
 </video>
 
-The LED flasher is a popular electronics project often built by hobbyists and
-students as an introduction to the basics of the field. The objective is to make
-a light blink on and off at a regular rate, like a car indicator or bike light.
+The LED flasher is a popular electronis project built by hobbyists and students
+which demonstrates some fundamental principles of electronics.
 
 A brief look around the internet reveals [a remarkable number of different ways
-of achieving the same
+of achieving the
 effect](https://www.youtube.com/results?search_query=led+flasher+diy). Some make
 use of [discrete components only](https://en.wikipedia.org/wiki/Multivibrator),
 others use an oscillator chip such as the popular [555 timer
-IC](https://en.wikipedia.org/wiki/555_timer_IC). However two components can be
-found in practically all[^all] designs: a resistor and capacitor, used to keep
-time and [set the frequency of
+IC](https://en.wikipedia.org/wiki/555_timer_IC). Two components can be found in
+practically all[^all] designs: a resistor and capacitor, used to keep time and
+[set the frequency of
 oscillation](https://en.wikipedia.org/wiki/RC_time_constant).
 
 [^all]: 
-    I feel obliged to qualify my use of the word "all" here. There do of course
-    exist ways of making an LED flasher whilst avoiding using any resistor or
-    capacitor. In fact, I can think of at least a couple off the top of my head.
-    <!-- TODO: write some more things here -->
-    
-    Here are some techniques that I find completely uninteresting, as they 
-    avoid creating an oscillator altogether, instead delegating the task of 
-    making an oscillator to someone else:
+    There do of course exist ways of making an LED flasher whilst avoiding using
+    any discrete resistor or capacitor. For instance, we can cheat and delegate 
+    the task of making an oscillator to someone else:
 
     - Using a microcontroller with an internal on-chip oscillator;
     - Using a special LED with in-built flashing circuitry.
     
-    There are also some techniques that are indeed very interesting, but out of
-    scope by straying from the land of the purely electronic. Here's one example:
+    Or, more interestingly, we can leave the realm of pure electronics. For 
+    example:
     
     - Detecting a motor's period of revolution using a permanent magnet and a 
       [Hall effect sensor](https://en.wikipedia.org/wiki/Hall_effect_sensor)
@@ -57,16 +51,14 @@ oscillation](https://en.wikipedia.org/wiki/RC_time_constant).
     Prize](https://www.flashinglightprize.com/).
 
 This page documents my small contribution to the collective catalogue of LED
-flasher circuits. My circuit's distinguishing feature is that aside from its
-input (a +9V power jack) and output (a standard white[^led-colour] LED), it
-consists solely of 6 transistors. There is **neither a resistor nor a
-capacitor** present. So, how does it keep time?
+flasher circuits. Its distinguishing feature is that aside from its +9V power
+jack and LED[^led-colour], the entire circuit consists solely of 6 transistors.
+There is *neither a resistor nor a capacitor present*.
 
 [^led-colour]:
-    I used white because that's what I had at hand, however the circuit
-    accommodates any colour of LED. In this circuit LED current is independent
-    of forward voltage, so an LED of any colour can be swapped in without
-    requiring any adjustment to the component values.
+    I used a standard white LED. However, my circuit regulates LED current
+    independently of forward voltage, so any colour can be swapped in without
+    requiring adjustment to the component values.
 
 <div style="text-align: center;">
 
