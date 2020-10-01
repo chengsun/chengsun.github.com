@@ -5,8 +5,7 @@ mathjax: yes
 ---
 
 
-<video autoplay 
-       loop 
+<video controls loop 
        style="float: right; padding: 0.5em; width: 10em; max-width: 50%;" 
        src="/assets/images/drawing-doughnuts.webm" 
        type="video/webm">
