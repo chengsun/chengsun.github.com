@@ -1,1 +1,5 @@
 markdown: kramdown
+plugins:
+  - jekyll-feed
+title: Cheng Sun
+description: Milli-pictures and kilo-words, things that interest me.
