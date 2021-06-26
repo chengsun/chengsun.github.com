@@ -29,7 +29,8 @@
             background-color: #FFE;
         }
         </style>
-	<script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_CHTML"></script>
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js"></script>
         </head>
         <body>
         <h1>AS Physics Chapter 4 - Material vocab</h1>
@@ -64,7 +65,7 @@
         }
         function answer() {
             doma.innerHTML = questions[qkeys[curi]].replace(/\n/g,'<br/>');
-            MathJax.Hub.Queue(["Typeset", MathJax.Hub])
+            MathJax.typeset();
             next();
         }
         function next() {
