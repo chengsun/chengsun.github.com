@@ -56,4 +56,6 @@ Most of this is very old stuff that I made back in secondary school and sixth fo
 
 * I am a user (and big fan) of [Arch Linux](https://www.archlinux.org/).
 
+* Find me on <a rel="me" href="https://demigod.bar/@chengsun">Mastodon</a>.
+
 [![Project Euler](https://projecteuler.net/profile/infinigon.png)](https://projecteuler.net)
